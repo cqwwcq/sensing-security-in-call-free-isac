@@ -1,0 +1,132 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{xcolor,framed}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx,booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\geometry{left=2.7cm,right=2.7cm,top=2.5cm,bottom=2.5cm}
+\setlength{\parskip}{0.7em}
+\setlength{\parindent}{0pt}
+\definecolor{shadecolor}{rgb}{0.92,0.92,0.92}
+
+% Replace every bracketed placeholder before submission.
+\newcommand{\manuscriptID}{[Manuscript ID]}
+\newcommand{\manuscriptTitle}{[Manuscript title]}
+\newcommand{\journalName}{[Journal name]}
+\newcommand{\authorName}{[Corresponding author's name]}
+
+% Use \reviewer{Editor} or \reviewer{Reviewer 1}, etc.
+% Each section starts a new page and resets the comment counter.
+\newcounter{reviewcomment}
+\newcommand{\reviewer}[1]{%
+  \clearpage
+  \setcounter{reviewcomment}{0}%
+  {\color{blue}\large\bfseries Comments by #1\par}
+  {\color{blue}\rule{\linewidth}{0.15em}}\par
+}
+\newenvironment{reviewcomment}{%
+  \stepcounter{reviewcomment}%
+  \begin{shaded}
+  \textbf{Comment \thereviewcomment:}\par
+}{\end{shaded}}
+\newenvironment{response}{\par\textbf{Response:}\par}{\par}
+\newcommand{\revisionlocation}[1]{\par\textbf{Location in the revised manuscript:} #1\par}
+\newenvironment{revisedtext}{%
+  \par\textbf{Revised text:}\begin{quote}\color{red}
+}{\end{quote}}
+
+\begin{document}
+\title{\textbf{Response to Reviewers' Comments}}
+\author{}
+\date{}
+\maketitle
+\small
+
+\textbf{Journal:} \journalName\\
+\textbf{Manuscript ID:} \manuscriptID\\
+\textbf{Manuscript title:} \manuscriptTitle
+
+Dear Editor and Reviewers,
+
+Thank you for your time and constructive comments on our manuscript.
+We provide a point-by-point response below, explaining the changes made
+and identifying their locations in the revised manuscript.
+
+[Describe how revisions are marked in the manuscript, if applicable.
+State whether page and line numbers refer to the clean or marked version.]
+
+The main revisions are summarized as follows:
+\begin{enumerate}
+  \item [Summarize the first major revision.]
+  \item [Summarize the second major revision.]
+  \item [Add or remove items as needed.]
+\end{enumerate}
+
+Thank you for considering our revised manuscript.
+
+\vspace{1cm}
+Yours sincerely,\\[0.5em]
+\authorName\\
+On behalf of all authors
+
+% Delete this section if there are no separate editorial comments.
+\reviewer{the Editor}
+\begin{reviewcomment}
+[Insert the editor's comment verbatim.]
+\end{reviewcomment}
+\begin{response}
+[Provide a direct response and describe the action taken.
+If no change was made, explain the reason with supporting evidence.]
+\end{response}
+\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+% Delete the revisedtext block when no quoted revision is needed.
+\begin{revisedtext}
+[Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+\reviewer{Reviewer 1}
+\begin{reviewcomment}
+[Insert the reviewer's first comment verbatim.]
+\end{reviewcomment}
+\begin{response}
+[Address the concern directly. Explain the clarification, analysis,
+experiment, or revision, and provide supporting evidence where needed.]
+\end{response}
+\revisionlocation{[Section, page, and line numbers.]}
+\begin{revisedtext}
+[Insert the relevant revised passage.]
+\end{revisedtext}
+
+\begin{reviewcomment}
+[Insert the reviewer's second comment verbatim.]
+\end{reviewcomment}
+\begin{response}
+[Provide the response and describe any resulting changes.]
+\end{response}
+\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\begin{revisedtext}
+[Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+% Duplicate reviewer sections and comment/response blocks as needed.
+\reviewer{Reviewer 2}
+\begin{reviewcomment}
+[Insert the reviewer's comment verbatim.]
+\end{reviewcomment}
+\begin{response}
+[Provide the response and describe any resulting changes.]
+\end{response}
+\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\begin{revisedtext}
+[Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+% Optional references cited in this response letter:
+% \begin{thebibliography}{9}
+% \bibitem{response-reference}
+% [Authors, title, publication, volume, pages, year, DOI.]
+% \end{thebibliography}
+
+\end{document}

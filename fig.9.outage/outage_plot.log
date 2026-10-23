@@ -1,0 +1,21 @@
+﻿Realizations attempted: 196; error draws per realization: 4000
+Pairs kept per NMSE point : 196  195  196  196  196  196  195  196  196  196  196  196  196
+Pairs discarded (QoS check): 0    0    0    0    0    0    1    0    0    0    0    0    0
+
+ NMSE dB | nominal outage (%)     | robust outage (%)      | sensing SNR nom/rob (dB)
+     -28 |   0.0000 +/- 0.0000   |   0.0000 +/- 0.0000   |   9.31 /   9.22
+     -26 |   0.0000 +/- 0.0000   |   0.0000 +/- 0.0000   |   9.32 /   9.22
+     -24 |   0.0000 +/- 0.0000   |   0.0000 +/- 0.0000   |   9.30 /   9.20
+     -22 |   0.0000 +/- 0.0000   |   0.0000 +/- 0.0000   |   9.31 /   9.21
+     -20 |   0.0000 +/- 0.0000   |   0.0000 +/- 0.0000   |   9.31 /   9.20
+     -18 |   0.0015 +/- 0.0015   |   0.0000 +/- 0.0000   |   9.31 /   9.19
+     -16 |   0.0217 +/- 0.0160   |   0.0028 +/- 0.0043   |   9.31 /   9.18
+     -14 |   0.4022 +/- 0.1597   |   0.0639 +/- 0.0471   |   9.31 /   9.19
+     -12 |   3.2710 +/- 0.6636   |   0.4120 +/- 0.1805   |   9.31 /   9.15
+     -10 |  18.4602 +/- 2.2035   |   1.5932 +/- 0.4534   |   9.31 /   9.11
+      -8 |  51.0198 +/- 3.2142   |   7.2114 +/- 1.0641   |   9.30 /   9.06
+      -6 |  84.3911 +/- 1.7833   |  16.4713 +/- 1.6774   |   9.30 /   8.96
+      -4 |  99.3425 +/- 0.1824   |  31.8348 +/- 1.6419   |   9.28 /   8.59
+[Warning: Exported image displays axes toolbar. To remove axes toolbar from image, export again.] 
+
+Saved figure: E:\paper writing\AN-Aided Secure Sensing in Cell-Free Massive MIMO ISAC With an Internal Adversary\revised\updated_codes\fig.9.outage\..\..\figure\outage_vs_nmse.pdf

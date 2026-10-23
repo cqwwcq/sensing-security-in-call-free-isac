@@ -298,6 +298,7 @@ Five candidate designs are included for comparison. The \emph{no-AN} baseline ma
 
 \begin{figure}[!t]
     \centering
+    % Code: fig.7.detection/ (AN_run_optimization_mi.m, AN_Em.m); data: detection_results.mat. See FIGURE_SCRIPT_MAP.md.
     \includegraphics[width=0.8\columnwidth]{localization_success_tvt.pdf}
     \caption{Target-localization success rate versus the realized AN-power ratio $\eta$.}
     \label{fig:localization-success}
@@ -307,6 +308,7 @@ For $M_{\mathrm{tx}}=16$, \eqref{eq:fake-dominance} gives the sufficient conditi
 
 \begin{figure}[!t]
     \centering
+    % Code: fig.7.detection/ (same sweep as Fig. 2); data: detection_sweep.mat (snr_*). See FIGURE_SCRIPT_MAP.md.
     \includegraphics[width=0.8\columnwidth]{sensing_snr_final.pdf}
     \caption{Target sensing SNR versus the realized AN-power ratio $\eta$ at the same paired operating points.}
     \label{fig:sensing-snr}
@@ -322,6 +324,7 @@ Fig.~\ref{fig:outage-nmse} evaluates QoS on the actual channels, now sweeping a 
 
 \begin{figure}[!t]
     \centering
+    % Code: fig.9.outage/ (AN_run_optimization_robust.m); data: outage_results.mat. See FIGURE_SCRIPT_MAP.md.
     \includegraphics[width=0.8\columnwidth]{outage_vs_nmse.pdf}
     \caption{Communication outage probability $\Pr\{\min_i\gamma_i^{\mathrm{AN}}<\Gamma_{\mathrm{comm}}\}$ on the actual channel versus the CSI NMSE for four design variants.}
     \label{fig:outage-nmse}

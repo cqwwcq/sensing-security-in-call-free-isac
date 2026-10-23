@@ -96,8 +96,10 @@ solver functions and the saved results; these pieces are not included:
 2. **Per-AP separation is built into the attack.** `AN_Em.m` forms each AP's observation
    `H_{a,k}(W_k s + z_k s_z) + noise` separately, so the adversary gets perfectly separated
    per-AP signals. This is the assumption Reviewer 1 (comment 1) and Reviewer 2 (comment 2) question.
-3. **Adversary CSI.** The EM prior is the true `H_{a,k}` plus CN(0, 2·10⁻⁴) error, i.e.
-   near-perfect adversary CSI, whereas the paper describes the adversary using its own estimate.
+3. **Adversary CSI.** `AN_Em.m` computes its initial least-squares estimate with the true
+   `H_{a,k}` (`pinv(H'H)H'y`) and uses the true `H_{a,k}` as the prior mean of the EM channel
+   update, so the attack effectively has perfect CSI. The paper describes the adversary using
+   its own estimate Ĥ_{a,k}^adv.
 4. **Noise in the attack.** `AN_Em.m` adds its `sigma2` argument to every snapshot. In the
    earlier `LinesCont.m` caller, `sigma2` was one M_UE × 1 noise vector drawn per realization,
    i.e. the same noise sample on all 128 snapshots and all APs. Check that the current driver

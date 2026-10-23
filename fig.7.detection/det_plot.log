@@ -1,0 +1,21 @@
+﻿Realizations kept: 744 of 800
+Detection grid 10 m; N = 128 snapshots; M_tx = 16
+
+     rho      eta | proposed (%)           | null-space-only (%)   
+    0.05    0.058 |  38.04 [34.62, 41.58] |  37.10 [33.70, 40.63]
+    0.15    0.135 |  34.68 [31.34, 38.17] |  38.04 [34.62, 41.58]
+    0.30    0.231 |  31.05 [27.83, 34.46] |  32.66 [29.39, 36.11]
+    0.50    0.388 |  17.61 [15.04, 20.51] |  31.85 [28.61, 35.29]
+    0.75    0.495 |   3.23 [ 2.18,  4.75] |  26.48 [23.43, 29.76]
+    1.05    0.575 |   0.27 [ 0.07,  0.97] |  22.72 [19.85, 25.86]
+    1.50    0.646 |   0.13 [ 0.02,  0.76] |  14.78 [12.42, 17.52]
+    2.20    0.702 |   0.00 [ 0.00,  0.51] |   7.66 [ 5.96,  9.80]
+    3.50    0.748 |   0.00 [ 0.00,  0.51] |   4.57 [ 3.29,  6.32]
+       -    0.000 |  36.83 [33.44, 40.35] | (no AN)
+
+Target sensing SNR (dB), for the companion figure:
+  proposed : 14.48  14.03  13.46  12.12  11.06  10.01   8.77   7.32   5.45
+  null-only: 14.39  14.01  13.47  12.38  11.39  10.56   9.66   8.79   7.88
+  no AN    : 14.71
+
+Saved figure: E:\paper writing\AN-Aided Secure Sensing in Cell-Free Massive MIMO ISAC With an Internal Adversary\revised\updated_codes\fig.7.detection\..\..\figure\detection_rate_final.pdf

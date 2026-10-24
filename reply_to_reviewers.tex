@@ -217,12 +217,20 @@ when the $M_{\mathrm{tx}}$-element array can resolve the true and fake
 directions. We now make this explicit by imposing (9g$'$) on
 $\mathcal{K}_{\mathrm{res}}=\{k:|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|\ge2/M_{\mathrm{tx}}\}$,
 i.e., on the APs whose two directions are at least one Rayleigh width
-apart. In the default geometry, the target and the virtual location are
-nearly collinear with three transmit APs, for which
-$|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|\approx0.03$--$0.04<2/M_{\mathrm{tx}}=0.125$.
-At these APs no distinguishable fake peak can be formed, and imposing the
-constraint would only consume sensing power. The remaining five APs satisfy
-the condition.
+apart. With the original virtual location
+$\mathbf{p}_{\mathrm{f}}=(5,-25)$~m, the target and the virtual location
+were nearly collinear with three transmit APs, for which
+$|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|\approx0.03$--$0.04<2/M_{\mathrm{tx}}=0.125$,
+so no distinguishable fake peak could be formed at these APs. We have
+therefore relocated the virtual location to
+$\mathbf{p}_{\mathrm{f}}=(175,35)$~m, for which all eight transmit APs
+satisfy the condition, with
+$\min_k|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|=0.163$, so that
+$\mathcal{K}_{\mathrm{res}}$ contains all transmit APs. As explained in our
+response to Reviewer~2, Comment~5, this full support is also what makes the
+true and fake hypotheses symmetric for a multi-hypothesis adversary. The set
+$\mathcal{K}_{\mathrm{res}}$ is kept in the formulation, since it determines
+where the constraint is meaningful in a general geometry.
 
 \textbf{(iv) From the true direction to the dominant peak.} We agree that
 (10$'$) compares the fake direction with the true direction only, and that
@@ -283,8 +291,11 @@ snapshots and reconstruction errors is evaluated in Section~IV.''
 \forall k\in\mathcal{K}_{\mathrm{res}}$.''
 
 \textit{Section IV-B:} ``By (10), $\rho>1$ is sufficient for the
-fake-direction response to exceed the true-direction response at the
-$|\mathcal{K}_{\mathrm{res}}|=5$ APs with resolvable directions.''
+fake-direction response to exceed the true-direction response at every
+transmit AP, since $\mathbf{p}_{\mathrm{f}}$ is chosen such that
+$\mathcal{K}_{\mathrm{res}}$ contains all of them.''
+
+\textit{Table I:} ``True/fake coordinates: $(-75,75)/(175,35)$~m.''
 \end{revisedtext}
 
 \begin{reviewcomment}
@@ -649,7 +660,7 @@ fake hypothesis to be supported by the same APs as the true one. An AP whose
 true and fake directions are unresolvable supports only the true
 hypothesis, so that a vote-counting adversary favors the target unless
 $\mathcal{K}_{\mathrm{res}}$ contains all transmit APs. In the revised
-simulations, we therefore choose $\mathbf{p}_{\mathrm{f}}=[X]$, for which
+simulations, we therefore choose $\mathbf{p}_{\mathrm{f}}=(175,35)$~m, for which
 all eight transmit APs satisfy the resolvability condition of our response
 to Reviewer~1, Comment~2. With full support, the two hypotheses differ only
 in their peak powers, which are set by $\rho$ in (9g). If the two powers are

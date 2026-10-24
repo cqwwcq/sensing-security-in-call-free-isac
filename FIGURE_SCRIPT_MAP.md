@@ -104,10 +104,11 @@ Additions for the revision, beyond the published sweep:
   guarantees the fake-direction response exceeds the true-direction one) and
   `opts.fake_mask` (APs at which (9g) is imposed). `sim_config.m` turns both on
   (`cfg.fake_tleak`, `cfg.fake_resolvable_only`); the mask keeps the APs whose true and fake
-  directions are at least one Rayleigh width apart, |sin φ_k − sin φ_fake,k| ≥ 2/M_tx. In the
-  default geometry this excludes the APs at (−200, 200), (200, −200) and (0, −200), which are
-  nearly collinear with the target and the fake location. Set both to `false` to reproduce
-  the published sweep.
+  directions are at least one Rayleigh width apart, |sin φ_k − sin φ_fake,k| ≥ 2/M_tx. With the
+  relocated virtual location `cfg.PosFake = [175 35]` all 8 APs pass (min |Δ sin| = 0.163), so
+  the mask is all-true; with the published (5, −25), the APs at (−200, 200), (200, −200) and
+  (0, −200) fail, being nearly collinear with the target and the fake location. Set both
+  options to `false` and `cfg.PosFake = [5 -25]` to reproduce the published sweep.
 - **Fake-peak dominance** (Reviewer 1, Comment 2): `fdom_*`, the fraction of APs whose
   reconstructed fake-direction response exceeds the true-direction response, and `pkf_*` /
   `pkt_*`, the fraction whose reconstructed dominant peak lies at the fake / true direction,
@@ -120,9 +121,9 @@ Additions for the revision, beyond the published sweep:
   `fhit_*` whether they land in the virtual location's cell. Each AP votes at most once per
   cell, and cells next to a TX AP are not taken as hypotheses (`cfg.mh_ap_guard`); a second
   hypothesis competes only with at least `cfg.mh_coherent` of the first one's votes. The fake
-  hypothesis is supported only by APs with resolvable directions, so with the default
-  `PosFake = (5, −25)` (5 of 8 resolvable) a vote-counting adversary recovers the target;
-  e.g. `cfg.PosFake = [175 35]` makes all 8 APs resolvable.
+  hypothesis is supported only by APs with resolvable directions, so with the published
+  `PosFake = (5, −25)` (5 of 8 resolvable) a vote-counting adversary recovers the target; this
+  is why the default is now (175, 35), which all 8 APs resolve.
 - **Fake-peak cap** (Reviewer 2, Comment 5): `opts.fake_upper` (κ) in both solvers caps the
   fake-direction response at κ(ρ‖a^H W_k‖² + T_k), so ρ ≈ 1 gives power-matched true and fake
   peaks. Off by default (`cfg.fake_upper = Inf`); for the matched operating point, rerun with

@@ -35,7 +35,9 @@ cfg.PosTx = [-200 -200; 200 200; -200 200; 200 -200; ...
              0 -200; 0 200; -200 0; 200 0];
 cfg.PosRx = [150 150; -150 -150; -150 150; 150 -150];
 cfg.PosTarget = [-75 75];
-cfg.PosFake = [5 -25];
+cfg.PosFake = [175 35];       % relocated so that all TX APs resolve the true and
+                              % fake directions (Reviewer 2, Comment 5);
+                              % published: [5 -25], resolvable at 5 of 8 APs
 cfg.PosUE = [120 120; -120 -120; -120 120; 120 -120];   % [ASSUMED]
 cfg.adversary = 1;            % AN_Em.m treats user 1 as the adversary
 

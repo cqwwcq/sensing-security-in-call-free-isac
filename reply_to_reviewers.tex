@@ -437,6 +437,39 @@ $T_k$. Exploiting it at the receivers would add $\sum_kc_kT_k\ge0$, so
 $\gamma_t$ is a lower bound on the achievable sensing SNR.''
 \end{revisedtext}
 
+\begin{reviewcomment}
+The simulation results could be strengthened. In particular, Fig. 4
+compares the proposed robust design mainly with nominal schemes. Including
+a robust no-AN baseline would provide a fairer assessment of the benefit of
+the proposed approach.
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for this suggestion and agree that the comparison in
+Fig.~4 was not balanced. We have added a robust no-AN baseline, obtained by
+applying the same error-averaged SINR constraint (20) to the no-AN design.
+This separates the effect of the robust formulation from that of the AN:
+robust designs are now compared with each other, and nominal designs with
+each other.
+
+At $-10$~dB NMSE, the robust no-AN baseline yields an outage probability of
+$[X]\%$ with a sensing SNR of $[X]$~dB, compared with $[X]\%$ and $[X]$~dB
+for the proposed robust design. The robustness term therefore benefits both
+designs, and the remaining difference between the two robust designs, $[X]$~dB
+of sensing SNR, is the cost of the AN, paid in exchange for the reduction of
+the localization success rate in Fig.~2. We have also removed the statement
+that attributed the high outage of the nominal no-AN baseline to its higher
+sensing SNR, since the robust no-AN baseline shows that this outage is
+removed by the robust formulation alone.
+\end{response}
+\revisionlocation{Section~IV-B, Fig.~4 and its discussion. [Add page and
+line numbers.]}
+\begin{revisedtext}
+\textit{Section IV-B:} ``With the same error-averaged constraint, the robust
+no-AN baseline reduces the outage at $-10$~dB NMSE to $[X]\%$ at a sensing
+SNR of $[X]$~dB. Relative to it, the robust proposed design costs $[X]$~dB of
+sensing SNR, in exchange for the privacy gain of Fig.~2.''
+\end{revisedtext}
+
 % Duplicate reviewer sections and comment/response blocks as needed.
 \reviewer{Reviewer 2}
 \begin{reviewcomment}
@@ -608,14 +641,75 @@ covariance over the available snapshots.''
 \end{revisedtext}
 
 \begin{reviewcomment}
-[Insert the reviewer's fourth comment verbatim.]
+Network-wide effective-channel nulling in (6) relies on coherent
+cancellation of the AN contributions transmitted by geographically
+distributed APs, i.e., $\sum_k\widehat{\mathbf g}_{i,k}^H\mathbf z_k=0$.
+This cancellation is sensitive not only to channel-estimation errors but
+also to residual inter-AP carrier-phase, timing, and frequency
+synchronization errors. Since the imperfect-CSI extension in (17)--(20)
+accounts only for isotropic channel-estimation errors, how robust is the
+central receive-processing asymmetry when the distributed AP phases are not
+perfectly synchronized?
 \end{reviewcomment}
 \begin{response}
-[Provide the response and describe any resulting changes.]
+We thank the reviewer for raising this important practical issue. We agree
+that the effective-channel null relies on coherent cancellation across the
+APs and that (17)--(20) do not cover synchronization errors. We have added
+an analysis and a numerical evaluation of this effect.
+
+\textbf{What is affected.} A residual phase offset $\psi_k$ at AP~$k$
+rotates its entire transmit signal. This affects only the coherent
+cancellation at the legitimate combiner outputs. The sensing SNR (2) is
+unaffected, since the receive APs combine the echoes of different transmit
+APs non-coherently, as clarified in our responses to Reviewer~1, Comment~4,
+and Reviewer~3, Comment~1. The privacy mechanism is unaffected as well,
+since the adversary processes each AP's component separately, and a
+per-AP phase rotation leaves each covariance
+$\mathbf{R}_{\widehat{\mathbf{x}}_k}$ unchanged.
+
+\textbf{Residual AN.} With $c_{i,k}=\widehat{\mathbf{g}}_{i,k}^H\mathbf{z}_k$
+and independent phase errors $\psi_k\sim\mathcal{N}(0,\sigma_\psi^2)$,
+\begin{equation*}
+\mathbb{E}\Big\{\Big|{\textstyle\sum_k}e^{\jmath\psi_k}c_{i,k}\Big|^2\Big\}
+=e^{-\sigma_\psi^2}\Big|{\textstyle\sum_k}c_{i,k}\Big|^2
++\big(1-e^{-\sigma_\psi^2}\big){\textstyle\sum_k}|c_{i,k}|^2
+=\big(1-e^{-\sigma_\psi^2}\big){\textstyle\sum_k}|c_{i,k}|^2,
+\end{equation*}
+where the last step uses (6). The residual AN power therefore grows
+approximately as $\sigma_\psi^2\sum_k|c_{i,k}|^2$, i.e., quadratically in the
+phase standard deviation and in proportion to the per-AP AN contributions
+that the null cancels. Since this term is a convex quadratic form in the AN
+beams, it can be added to the robust formulation in the same way as the
+CSI-error floor $L_i^{\mathrm{csi}}$. The same expression applies to the
+data and sensing beams, whose coherent gains are scaled by
+$e^{-\sigma_\psi^2}$.
+
+\textbf{Numerical evaluation.} For phase standard deviations of $1$, $2$,
+$5$, $10$, and $20^\circ$, the residual AN power at the combiner outputs is
+$[X]$, $[X]$, $[X]$, $[X]$, and $[X]$~dB relative to the noise, in agreement
+with the closed form to within $[X]$~dB. The outage probability of the
+proposed design is $[X]\%$, $[X]\%$, $[X]\%$, $[X]\%$, and $[X]\%$, compared
+with $[X]\%$, $[X]\%$, $[X]\%$, $[X]\%$, and $[X]\%$ for the no-AN baseline.
+The receive-processing asymmetry is thus preserved for phase errors up to
+about $[X]^\circ$, which is within the synchronization accuracy reported for
+distributed MIMO systems [ref]. Beyond this, the robust extension above is
+required.
 \end{response}
-\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\revisionlocation{Section~III-C, new remark after (20); Section~IV-B. [Add
+page and line numbers.]}
 \begin{revisedtext}
-[Insert the relevant revised passage, if applicable.]
+\textit{Section III-C:} ``Residual inter-AP phase offsets
+$\psi_k\sim\mathcal{N}(0,\sigma_\psi^2)$ break the coherent cancellation in
+(6) and leave the AN power
+$(1-e^{-\sigma_\psi^2})\sum_k|\widehat{\mathbf{g}}_{i,k}^H\mathbf{z}_k|^2$ at
+the output of combiner $i$. Since this term is a convex quadratic form, it
+can be added to $\overline{\mathcal{I}}_i$ in the same way as
+$L_i^{\mathrm{csi}}$. The sensing SNR (2) and the attack, which process the
+transmit APs separately, are unaffected.''
+
+\textit{Section IV-B:} ``With phase standard deviations up to $[X]^\circ$,
+the residual AN stays $[X]$~dB below the noise and the outage of the
+proposed design remains below $[X]\%$.''
 \end{revisedtext}
 
 \begin{reviewcomment}
@@ -884,25 +978,107 @@ $(P_{\mathrm{d}},P_{\mathrm{fa}})$.''
 \end{revisedtext}
 
 \begin{reviewcomment}
-[Insert the reviewer's third comment verbatim.]
+All comparisons are between different AN schemes. Considering that AN
+spends a significant portion of power, another baseline to compare with
+would be a no-AN alternative that allocates the corresponding power to
+communication while keeping comparable sensing performance. The authors
+should remember that it is an ISAC system. It is questionable whether
+treating communication merely as a minimum requirement while devoting more
+than half of the transmit power to creating a fake peak is a reasonable
+design choice for an ISAC system. The authors should elaborate further on
+the tradeoff between sensing, communication, and security.
 \end{reviewcomment}
 \begin{response}
-[Provide the response and describe any resulting changes.]
+We thank the reviewer for this important comment. We agree that the AN
+power has an opportunity cost in communication, and that the original
+manuscript did not quantify it. We have added the suggested baseline and a
+discussion of the three-way tradeoff.
+
+\textbf{No-AN alternative with the AN power spent on communication.} For
+each channel realization, we give the no-AN design the same sensing SNR as
+the proposed design at $\eta\approx0.50$ and find, by bisection, the
+largest common SINR target it can still meet. This target is $[X]$~dB,
+i.e., $[X]$~dB above the $10$~dB requirement, and the corresponding sum
+rate is $[X]$~bit/s/Hz, compared with $[X]$~bit/s/Hz for the proposed
+design. This rate gap is the communication cost of the privacy provided
+at this operating point.
+
+\textbf{Three-way tradeoff.} Table~R1 summarizes, for several AN-power
+ratios, the localization success rate, the sensing SNR, and the rate gap
+with respect to the no-AN alternative. The operator selects the operating
+point through $\rho$ according to the required privacy level. For example,
+a smaller AN-power ratio of $\eta\approx[X]$ already reduces the
+localization success rate to $[X]\%$ at a rate gap of
+$[X]$~bit/s/Hz. Moreover, the AN power is not entirely lost for sensing:
+as discussed in our response to Reviewer~2, Comment~1, exploiting the known
+AN echo recovers $[X]$~dB of sensing SNR.
+
+\textbf{Design rationale.} We treat communication as a guaranteed QoS
+constraint because the privacy requirement is imposed in addition to an
+ISAC service that must keep serving its users. The new baseline makes
+explicit what this guarantee costs relative to a design that would spend
+the AN power on communication, and we have added this discussion to
+Section~IV.
+
+\begin{center}
+\small
+Table R1. Tradeoff between privacy, sensing, and communication.\\[0.3em]
+\begin{tabular}{cccc}
+\hline
+$\eta$ & Localization success & Sensing SNR & Rate gap\\
+ & (\%) & (dB) & (bit/s/Hz)\\
+\hline
+$0$ (no AN) & $[X]$ & $[X]$ & $0$\\
+$[X]$ & $[X]$ & $[X]$ & $[X]$\\
+$[X]$ & $[X]$ & $[X]$ & $[X]$\\
+$\approx0.50$ & $[X]$ & $[X]$ & $[X]$\\
+\hline
+\end{tabular}
+\end{center}
 \end{response}
-\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\revisionlocation{Section~IV-B, new paragraph after the discussion of
+Fig.~3. [Add page and line numbers.]}
 \begin{revisedtext}
-[Insert the relevant revised passage, if applicable.]
+\textit{Section IV-B:} ``To quantify the communication cost of privacy, we
+give the no-AN design the sensing SNR of the proposed design at
+$\eta\approx0.50$ and maximize its common SINR target. It then supports
+$[X]$~dB instead of $10$~dB, i.e., a sum rate of $[X]$ instead of
+$[X]$~bit/s/Hz. This rate gap, together with the sensing-SNR loss of
+Fig.~3, is the price of reducing the localization success rate to $[X]\%$,
+and the operator trades it through $\rho$.''
 \end{revisedtext}
 
 \begin{reviewcomment}
-[Insert the reviewer's fourth comment verbatim.]
+In the experiment, the no-AN localization success rate is 36\%, which is
+already low. What if the adversary is in a more favorable situation? Is AN
+still effective?
 \end{reviewcomment}
 \begin{response}
-[Provide the response and describe any resulting changes.]
+We thank the reviewer for this question. The no-AN success rate of about
+$36\%$ reflects a strict success criterion, namely that the estimate falls in
+the exact $10~\mathrm{m}\times10~\mathrm{m}$ cell of the target, together
+with the front-back ambiguity of the uniform linear arrays and the
+reconstruction errors from a finite number of snapshots. Several assumptions
+already favor the adversary: it is genie-aided in the per-AP separation, as
+discussed in our responses to Reviewer~1, Comment~1, and Reviewer~2,
+Comment~2, and the simulated adversary knows its channels accurately.
+
+To examine an even more favorable situation, we have evaluated the attack
+with coarser search cells, which make success easier. With
+$20~\mathrm{m}$ and $50~\mathrm{m}$ cells, the no-AN success rate rises to
+$[X]\%$ and $[X]\%$, while the proposed design at $\eta\approx0.50$ keeps it
+at $[X]\%$ and $[X]\%$, respectively. In addition, an adversary allowed two
+guesses, as in our response to Reviewer~2, Comment~5, succeeds in $[X]\%$ of
+the cases without AN and $[X]\%$ with the proposed design. The AN therefore
+remains effective when the adversary is favored, since it moves the
+estimate to a different location rather than merely degrading its accuracy.
 \end{response}
-\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\revisionlocation{Section~IV-B, discussion of Fig.~2. [Add page and line
+numbers.]}
 \begin{revisedtext}
-[Insert the relevant revised passage, if applicable.]
+\textit{Section IV-B:} ``For a more favorable adversary, coarser search
+cells of $20$ and $50$~m raise the no-AN success rate to $[X]\%$ and
+$[X]\%$, whereas the proposed design keeps it at $[X]\%$ and $[X]\%$.''
 \end{revisedtext}
 
 \begin{reviewcomment}

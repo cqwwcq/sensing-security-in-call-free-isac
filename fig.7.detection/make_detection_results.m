@@ -14,6 +14,7 @@ function make_detection_results(sweep_file, out_file)
 %                  random / mechanism-aware rule and with two guesses
 %     p_fhit_*     fraction of dominant-peak estimates in the virtual
 %                  location's cell
+%     p_detc_*     dominant-peak success with the search cells of cfg.cell_list
 %     pd_*_mean    mean detection probability, see DETECTION_PD
 
 here = fileparts(mfilename('fullpath'));
@@ -47,6 +48,9 @@ O.fdom_prop_mean = mean(S.fdom_prop, 2).';
 O.pkf_prop_mean = mean(S.pkf_prop, 2).';
 O.pkt_prop_mean = mean(S.pkt_prop, 2).';
 O.pkt_noan_mean = mean(S.pkt_noan);
+O.p_detc_noan = mean(S.detc_noan, 3);               % 1 x nCell
+O.p_detc_prop = mean(S.detc_prop, 3);               % nRho x nCell
+O.p_detc_null = mean(S.detc_null, 3);
 for r = {'mhv', 'mhr', 'mha', 'mhs', 'fhit'}
     O.(['p_' r{1} '_noan']) = mean(S.([r{1} '_noan']));
     O.(['p_' r{1} '_null']) = mean(S.([r{1} '_null']), 2).';
@@ -76,6 +80,10 @@ fprintf('  proposed : success %.2f %%, SNR %.2f dB, SNR with AN echo %.2f dB, fa
 fprintf('  proposed : dominant peak at fake / true / elsewhere: %.0f / %.0f / %.0f %% of APs (no AN: %.0f %% at true)\n', ...
     100*O.pkf_prop_mean(j), 100*O.pkt_prop_mean(j), ...
     100*max(0, 1 - O.pkf_prop_mean(j) - O.pkt_prop_mean(j)), 100*O.pkt_noan_mean);
+for c = 1:numel(cfg.cell_list)
+    fprintf('  %2d m cells: success no AN %.1f %%, proposed %.1f %%, null-only %.1f %%\n', ...
+        cfg.cell_list(c), 100*O.p_detc_noan(c), 100*O.p_detc_prop(j, c), 100*O.p_detc_null(j, c));
+end
 fprintf('  estimates in the virtual location''s cell: no AN %.1f %%, proposed %.1f %%\n', ...
     100*O.p_fhit_noan, 100*O.p_fhit_prop(j));
 fprintf('  multi-hypothesis attack, success with votes / random / aware rule / two guesses:\n');

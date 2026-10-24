@@ -21,6 +21,9 @@ function run_detection_sweep(out_file)
 %                with the votes / random / mechanism-aware rule, and with
 %                two guesses (Reviewer 2, Comment 5), see LOCALIZE_MULTI
 %     fhit_*     the dominant-peak estimate lies in the virtual location's cell
+%     detc_*     success of the dominant-peak attack with the search cells
+%                of cfg.cell_list, a more favorable adversary (Reviewer 3,
+%                Comment 4), 1 x nCell x runs (or nRho x nCell x runs)
 %     est_*      estimated location of the dominant-peak attack, 2 x runs
 %                (or nRho x 2 x runs), for the scatter plot of Reviewer 1,
 %                Comment 3
@@ -95,6 +98,7 @@ for f = fields
 end
 S.(['pd_' name]) = cat(ndims(x(1).pd) + 1, x.pd);
 S.(['est_' name]) = cat(3, x.est);
+S.(['detc_' name]) = cat(3, x.detc);
 if strcmp(name, 'noan')
     S = rmfield(S, {'eta_noan', 'snrz_noan', 'fdom_noan'});
 end
@@ -127,6 +131,7 @@ out.noan = evaluate(w_i, w_t, zeros(size(z)));
 blank = struct('det', nan, 'err', nan, 'eta', nan, 'snr', nan, 'snrz', nan, ...
     'fdom', nan, 'pkf', nan, 'pkt', nan, ...
     'mhv', nan, 'mhr', nan, 'mha', nan, 'mhs', nan, 'fhit', nan, 'est', nan(1, 2), ...
+    'detc', nan(1, numel(cfg.cell_list)), ...
     'pd', nan(numel(cfg.pd_offset_dB), numel(cfg.pd_N_list)));
 prop = repmat(blank, nr, 1); null = prop; zou = prop;
 
@@ -187,6 +192,7 @@ s.mha = [x.mha].';
 s.mhs = [x.mhs].';
 s.fhit = [x.fhit].';
 s.est = cat(1, x.est);
+s.detc = cat(1, x.detc);
 s.pd = permute(cat(3, x.pd), [3 1 2]);
 end
 
@@ -238,5 +244,12 @@ e.mhs = double(mh.det_set);
 fcell = floor((cfg.PosFake - cfg.area([1 3])) / cfg.cell_size);
 e.fhit = double(isequal(floor((est - cfg.area([1 3])) / cfg.cell_size), fcell));
 e.est = est;
+% Dominant-peak attack with coarser search cells (Reviewer 3, Comment 4).
+e.detc = zeros(1, numel(cfg.cell_list));
+for c = 1:numel(cfg.cell_list)
+    cfg_c = cfg;
+    cfg_c.cell_size = cfg.cell_list(c);
+    e.detc(c) = double(localize_target(cfg_c, geo, Rk));
+end
 e.pd = detection_pd(cfg, m.V, cfg.pd_offset_dB, cfg.pd_N_list);
 end

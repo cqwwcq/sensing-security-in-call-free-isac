@@ -89,6 +89,8 @@ Run from MATLAB, in this order:
 | 5c | `fig.7.detection/plot_location_scatter.m` | `fig.7.detection/location_scatter_response.pdf` (response letter Fig. R1, R1-3) |
 | 6 | `fig.9.outage/run_outage_sweep.m` | `outage_results.mat` |
 | 7 | `fig.9.outage/plot_outage.m` | `figure/outage_vs_nmse.pdf` (Fig. 4), printout |
+| 8 | `fig.9.outage/run_sync_sweep.m` | `sync_results.mat`, printout (response letter, R2-4) |
+| 9 | `fig.7.detection/run_comm_tradeoff.m` | `comm_tradeoff.mat`, printout (response letter, R3-3) |
 
 Shared helpers are in `common/`: `sim_config.m` (all parameters), `setup_geometry.m`,
 `gen_channels.m` (LMMSE pilots or fixed NMSE), `localize_target.m` (dominant-peak line
@@ -128,6 +130,17 @@ Additions for the revision, beyond the published sweep:
   fake-direction response at κ(ρ‖a^H W_k‖² + T_k), so ρ ≈ 1 gives power-matched true and fake
   peaks. Off by default (`cfg.fake_upper = Inf`); for the matched operating point, rerun with
   e.g. `cfg.fake_upper = 1.2` and `cfg.rho_list` around 1.
+- **AP synchronization** (Reviewer 2, Comment 4): `run_sync_sweep.m` rotates each AP's signal
+  by a residual phase ψ_k ~ N(0, s²), s ∈ {0, 1, 2, 5, 10, 20}°, on the actual channels and
+  reports the outage of the no-AN and proposed designs and the residual AN power at the
+  combiner outputs, next to the closed form (1 − e^{−s²}) Σ_k |u_i^H H_{i,k} z_k|² (plus the
+  e^{−s²}-weighted coherent residual from CSI errors).
+- **Communication cost of the AN** (Reviewer 3, Comment 3): `run_comm_tradeoff.m` gives the
+  no-AN design the proposed design's sensing SNR at ρ = 0.75 (η ≈ 0.5) and finds by bisection
+  the largest common SINR target it still meets; it reports that target and the sum rates
+  (via `common/user_sinr.m`). Tradeoff rows for other η need `cfg.rho_ref` changed and a rerun.
+- **More favorable adversary** (Reviewer 3, Comment 4): the detection sweep also evaluates the
+  dominant-peak attack with the search cells of `cfg.cell_list` = 10/20/50 m (`detc_*`).
 - **Detection probability** (Reviewer 3, Comment 2): `pd_*`, GLRT over the Nue+1 known
   streams with Swerling-I echo draws on the designed beams, for N ∈ {5, 128} and RCS
   offsets −30…0 dB. `plot_detection_pd.m` overlays the closed-form model quoted in the

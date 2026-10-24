@@ -48,6 +48,7 @@ cfg.sigmarcs = sqrt(10);      % RCS variance 10 dBsm (solver uses sigmarcs^2)
 % --- Reconstruction attack and localization ---
 cfg.N_snapshot = 128;         % hard-coded in AN_Em.m [Table I]
 cfg.cell_size = 10;           % m [Table I]
+cfg.cell_list = [10 20 50];   % coarser cells for a more favorable adversary
 cfg.n_ang = 3604;             % angle-scan points over [-pi, pi)
 cfg.area = [-200 200 -200 200];  % search area [xmin xmax ymin ymax] [ASSUMED]
 cfg.mirror_rule = 'random';   % ULA front-back ambiguity: 'random' or 'both'

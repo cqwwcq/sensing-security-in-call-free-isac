@@ -99,14 +99,16 @@ for j = 1:nm
             case 'noan'
                 [w_i, w_t, u, z, okd] = solve(cfg, geo, ch, struct('an_mode', 'none'));
             case 'nom'
-                [w_i, w_t, u, z, okd] = solve(cfg, geo, ch, ...
-                    struct('an_mode', 'fake', 'sym_null', cfg.sym_null_prop));
+                [w_i, w_t, u, z, okd] = solve(cfg, geo, ch, struct('an_mode', 'fake', ...
+                    'sym_null', cfg.sym_null_prop, 'fake_tleak', cfg.fake_tleak, ...
+                    'fake_mask', fake_mask(cfg, geo)));
                 nom = struct('w_i', w_i, 'w_t', w_t, 'u', {u}, 'z', z);
             case 'null'
                 continue;                 % filled in after 'nom'
             case 'rob'
                 [w_i, w_t, u, z, okd] = solve(cfg, geo, ch, struct('an_mode', 'fake', ...
-                    'sym_null', cfg.sym_null_prop, 'beta_error', ch.beta_err));
+                    'sym_null', cfg.sym_null_prop, 'fake_tleak', cfg.fake_tleak, ...
+                    'fake_mask', fake_mask(cfg, geo), 'beta_error', ch.beta_err));
             case 'rnoan'
                 [w_i, w_t, u, z, okd] = solve(cfg, geo, ch, ...
                     struct('an_mode', 'none', 'beta_error', ch.beta_err));
@@ -136,6 +138,15 @@ end
     cfg.Ntx, cfg.Nue, cfg.Mtx, cfg.Nrx, cfg.Mue, cfg.P_T, cfg.Gamma_comm, ...
     cfg.sigma_ue_dBm, cfg.sigma_rx_dBm, cfg.epsilon, ch.Hhat, ...
     geo.Txbeamsteering, geo.Fake_Txbeamsteering, cfg.sigmarcs, geo.betark, cfg.rou, o);
+end
+
+function mask = fake_mask(cfg, geo)
+% APs at which the fake-peak constraint (9g) is imposed.
+if cfg.fake_resolvable_only
+    mask = geo.resolvable;
+else
+    mask = true(1, cfg.Ntx);
+end
 end
 
 function E = draw_effective_errors(cfg, beta_err)

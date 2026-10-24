@@ -14,6 +14,9 @@ function run_detection_sweep(out_file)
 %     snrz_*     sensing SNR (dB) with the known AN echo exploited
 %     fdom_*     fraction of APs whose reconstructed fake-direction response
 %                exceeds the true-direction response (Reviewer 1, Comment 2)
+%     pkf_*, pkt_*  fraction of APs whose reconstructed dominant peak lies at
+%                the fake / true direction (the rest lie elsewhere); fdom_*,
+%                pkf_* and pkt_* count only APs with resolvable directions
 %     pd_*       detection probability, nOffset x nN x runs (or nRho x
 %                nOffset x nN x runs), see DETECTION_PD
 %
@@ -78,7 +81,7 @@ end
 function S = collect(S, res, name)
 % Stack the per-run results of one design along the last dimension.
 x = [res.(name)];
-fields = {'det', 'err', 'eta', 'snr', 'snrz', 'fdom'};
+fields = {'det', 'err', 'eta', 'snr', 'snrz', 'fdom', 'pkf', 'pkt'};
 for f = fields
     S.([f{1} '_' name]) = cat(2, x.(f{1}));
 end
@@ -113,14 +116,16 @@ out.ok = out.ok && okd;
 out.noan = evaluate(w_i, w_t, zeros(size(z)));
 
 blank = struct('det', nan, 'err', nan, 'eta', nan, 'snr', nan, 'snrz', nan, ...
-    'fdom', nan, 'pd', nan(numel(cfg.pd_offset_dB), numel(cfg.pd_N_list)));
+    'fdom', nan, 'pkf', nan, 'pkt', nan, ...
+    'pd', nan(numel(cfg.pd_offset_dB), numel(cfg.pd_N_list)));
 prop = repmat(blank, nr, 1); null = prop; zou = prop;
 
 for j = 1:nr
     rho = cfg.rho_list(j);
 
     % --- Proposed fake-peak design ---
-    opts = struct('an_mode', 'fake', 'sym_null', cfg.sym_null_prop);
+    opts = struct('an_mode', 'fake', 'sym_null', cfg.sym_null_prop, ...
+        'fake_tleak', cfg.fake_tleak, 'fake_mask', fake_mask(cfg, geo));
     [w_i, w_t, ~, z, okd] = solve(cfg.P_T, rho, opts);
     out.ok = out.ok && okd;
     prop(j) = evaluate(w_i, w_t, z);
@@ -146,6 +151,15 @@ out.null = stack(null);
 out.zou = stack(zou);
 end
 
+function mask = fake_mask(cfg, geo)
+% APs at which the fake-peak constraint (9g) is imposed.
+if cfg.fake_resolvable_only
+    mask = geo.resolvable;
+else
+    mask = true(1, cfg.Ntx);
+end
+end
+
 function s = stack(x)
 % Per-rho results as column vectors; pd as nRho x nOffset x nN.
 s.det = [x.det].';
@@ -154,6 +168,8 @@ s.eta = [x.eta].';
 s.snr = [x.snr].';
 s.snrz = [x.snrz].';
 s.fdom = [x.fdom].';
+s.pkf = [x.pkf].';
+s.pkt = [x.pkt].';
 s.pd = permute(cat(3, x.pd), [3 1 2]);
 end
 
@@ -192,6 +208,10 @@ e.err = err;
 e.eta = m.eta;
 e.snr = 10*log10(m.gamma_t);
 e.snrz = 10*log10(m.gamma_t_z);
-e.fdom = mean(dom.fake_dominant);
+% Dominance diagnostics over the APs with resolvable true and fake directions.
+res = geo.resolvable;
+e.fdom = mean(dom.fake_dominant(res));
+e.pkf = mean(dom.peak_class(res) == 1);
+e.pkt = mean(dom.peak_class(res) == 2);
 e.pd = detection_pd(cfg, m.V, cfg.pd_offset_dB, cfg.pd_N_list);
 end

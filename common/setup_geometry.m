@@ -6,6 +6,9 @@ function geo = setup_geometry(cfg)
 %   geo.Fake_Txbeamsteering    expected by AN_run_optimization_*.m
 %   geo.betark                 Ntx x Nrx two-way path gains g_{r,k}
 %   geo.beta_ue                Nue x Ntx large-scale fading beta_{i,k}
+%   geo.resolvable             APs whose true and fake directions are at
+%                              least one Rayleigh width apart,
+%                              |sin(phi_k) - sin(phi_fake,k)| >= 2/Mtx
 
 [phi, d_tk] = compute_angle_dist(cfg.PosTx, cfg.PosTarget);   % Ntx x 1
 phi_fake = compute_angle_dist(cfg.PosTx, cfg.PosFake);
@@ -22,6 +25,7 @@ geo.a_fake = reshape(geo.Fake_Txbeamsteering, cfg.Ntx, cfg.Mtx).';
 % g_{r,k} = lambda^2 / ((4 pi)^3 d_{t,k}^2 d_{t,r}^2), stored as betark(k, r)
 geo.betark = cfg.lambda_c^2 ./ ((4*pi)^3 * (d_tk(:).^2) * (d_tr(:).'.^2));
 geo.beta_ue = d_ik .^ (-cfg.pathloss_exp);
+geo.resolvable = abs(sin(geo.phi) - sin(geo.phi_fake)) >= 2 / cfg.Mtx;
 geo.d_tk = d_tk(:).';
 geo.d_tr = d_tr(:).';
 end

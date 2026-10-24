@@ -14,6 +14,14 @@ function [gamma_t_opt, w_i_opt, w_t_opt,u_opt,z_opt, solve_time, success,power_z
     MAX_ITER_MAIN = 30;
     tol_main = 4e-3;
     SYM_NULL = false;   % eq:sym-null on the sensing beam (Section III-B)
+    % Revised prob:fake: add the AN response T_k in the true direction to
+    % the right-hand side, so that the fake-direction response dominates
+    % the true-direction one for any rho > 1 (Reviewer 1, Comment 2).
+    FAKE_TLEAK = false;
+    % APs at which prob:fake is imposed; by default all.  Restricting it to
+    % APs whose true and fake directions are resolvable avoids spending
+    % sensing power where no distinguishable fake peak can be formed.
+    FAKE_MASK = true(1, Ntx);
     % an_mode selects the design being solved:
     %   'fake' : proposed design, prob:null + prob:null-t + prob:fake
     %   'none' : no-AN baseline, sensing objective under QoS and power only
@@ -28,6 +36,12 @@ function [gamma_t_opt, w_i_opt, w_t_opt,u_opt,z_opt, solve_time, success,power_z
         end
         if isfield(opts, 'sym_null')
             SYM_NULL = opts.sym_null;
+        end
+        if isfield(opts, 'fake_tleak')
+            FAKE_TLEAK = opts.fake_tleak;
+        end
+        if isfield(opts, 'fake_mask')
+            FAKE_MASK = logical(opts.fake_mask);
         end
         if isfield(opts, 'an_mode')
             AN_MODE = opts.an_mode;
@@ -311,12 +325,17 @@ function [gamma_t_opt, w_i_opt, w_t_opt,u_opt,z_opt, solve_time, success,power_z
                     w_total_k_var = [squeeze(w_i_vars(:,:,k)), w_t_vars(:,k), z_vars(:,k)];
                     w_total_k_r = [squeeze(w_i_r(:,:,k)), w_t_r(:,k), z_r(:,k)];
                     W_ISAC_k_var = [squeeze(w_i_vars(:,:,k)), w_t_vars(:,k)];
-                    if USE_FAKE
+                    if USE_FAKE && FAKE_MASK(k)
                         expression grad_fake_term
                         grad_fake_term =2 * real( a_phi_k_H_list_fake{k} *  z_vars(:,k) * z_r(:,k)'*a_phi_k_H_list_fake{k}');
                         const_fake_term = real( a_phi_k_H_list_fake{k} * z_r(:,k) * z_r(:,k)'*a_phi_k_H_list_fake{k}' );
                         f=pow_pos( norm( a_phi_k_H_list{k} * W_ISAC_k_var, 'fro' ), 2 );
-                        rou*f-grad_fake_term+const_fake_term<=0;
+                        if FAKE_TLEAK
+                            t_leak = pow_pos(abs(a_phi_k_H_list{k} * z_vars(:,k)), 2);
+                            rou*f+t_leak-grad_fake_term+const_fake_term<=0;
+                        else
+                            rou*f-grad_fake_term+const_fake_term<=0;
+                        end
                     end
                     if ~USE_AN
                         % No-AN baseline: the AN beam is removed entirely.

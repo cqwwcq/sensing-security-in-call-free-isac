@@ -8,6 +8,8 @@ function make_detection_results(sweep_file, out_file)
 %                  the published Fig. 3
 %     snrz_prop_mean  proposed design with the AN echo exploited
 %     fdom_prop_mean  fraction of APs with a dominant reconstructed fake peak
+%     pkf_/pkt_*_mean fraction of APs whose dominant reconstructed peak lies
+%                  at the fake / true direction
 %     pd_*_mean    mean detection probability, see DETECTION_PD
 
 here = fileparts(mfilename('fullpath'));
@@ -38,6 +40,9 @@ O.snr_null_mean = mean(S.snr_null, 2).';
 O.snr_prop_mean = mean(S.snr_prop, 2).';
 O.snrz_prop_mean = mean(S.snrz_prop, 2).';
 O.fdom_prop_mean = mean(S.fdom_prop, 2).';
+O.pkf_prop_mean = mean(S.pkf_prop, 2).';
+O.pkt_prop_mean = mean(S.pkt_prop, 2).';
+O.pkt_noan_mean = mean(S.pkt_noan);
 O.pd_noan_mean = mean(S.pd_noan, 3);                 % nOffset x nN
 O.pd_null_mean = mean(S.pd_null, 4);                 % nRho x nOffset x nN
 O.pd_prop_mean = mean(S.pd_prop, 4);
@@ -59,6 +64,9 @@ fprintf('No AN: success %.2f %%, sensing SNR %.2f dB\n', 100*O.p_noan, O.snr_noa
 fprintf('eta = %.3f (rho = %.2f):\n', O.eta(j), cfg.rho_list(j));
 fprintf('  proposed : success %.2f %%, SNR %.2f dB, SNR with AN echo %.2f dB, fake peak dominant at %.0f %% of APs\n', ...
     100*O.p_prop(j), O.snr_prop_mean(j), O.snrz_prop_mean(j), 100*O.fdom_prop_mean(j));
+fprintf('  proposed : dominant peak at fake / true / elsewhere: %.0f / %.0f / %.0f %% of APs (no AN: %.0f %% at true)\n', ...
+    100*O.pkf_prop_mean(j), 100*O.pkt_prop_mean(j), ...
+    100*(1 - O.pkf_prop_mean(j) - O.pkt_prop_mean(j)), 100*O.pkt_noan_mean);
 fprintf('  null-only: success %.2f %%, SNR %.2f dB (its own eta %.3f)\n', ...
     100*O.p_null(j), O.snr_null_mean(j), O.eta_null(j));
 if has_zou

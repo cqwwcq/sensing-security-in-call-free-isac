@@ -161,14 +161,130 @@ rates represent the leakage under a conservative attack model.''
 \end{revisedtext}
 
 \begin{reviewcomment}
-[Insert the reviewer's second comment verbatim.]
+Constraint (9g) does not necessarily guarantee that the fake direction
+becomes the dominant peak of the reconstructed beampattern. Moreover, the
+condition used to derive (10) is not explicitly enforced in the
+optimization.
 \end{reviewcomment}
 \begin{response}
-[Provide the response and describe any resulting changes.]
+We thank the reviewer for this careful observation and agree with both
+points. Under the ideal covariance decomposition, the reconstructed
+true-direction response is $\widehat{B}_k(\phi_k)=S_k+T_k$, where
+$S_k=\|\mathbf{a}^H(\phi_k)\mathbf{W}_{-a,k}\|_F^2$ and
+$T_k=|\mathbf{a}^H(\phi_k)\mathbf{z}_k|^2$. The original constraint (9g)
+bounds $S_k$ through the fake-direction response
+$F_k=|\mathbf{a}^H(\phi_{\mathrm{fake},k})\mathbf{z}_k|^2$, but places no
+restriction on $T_k$, i.e., on the AN response in the true direction. The
+fake-direction response could therefore fall below the true-direction
+response even when (9g) holds, and the condition $T_k/F_k\le1/M_{\mathrm{tx}}$
+used to derive (10) was indeed not enforced. We have revised the design as
+follows.
+
+\textbf{(i) Revised fake-peak constraint.} We now include the
+true-direction AN response in the constraint itself:
+\begin{equation*}
+\left|\mathbf{a}^H(\phi_{\mathrm{fake},k})\mathbf{z}_k\right|^2
+\ge\rho\left\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\right\|_F^2
++\left|\mathbf{a}^H(\phi_k)\mathbf{z}_k\right|^2,\quad k\in\mathcal{K}_{\mathrm{res}}.
+\tag{9g$'$}
+\end{equation*}
+Since the remaining terms of $\widehat{B}_k(\phi_{\mathrm{fake},k})$ are
+nonnegative, $\widehat{B}_k(\phi_{\mathrm{fake},k})\ge F_k$, and since
+$S_k\le\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\|_F^2$, (9g$'$) directly gives
+\begin{equation*}
+\widehat{B}_k(\phi_{\mathrm{fake},k})-\widehat{B}_k(\phi_k)
+\ge F_k-S_k-T_k
+\ge(\rho-1)\left\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\right\|_F^2.
+\tag{10$'$}
+\end{equation*}
+Hence, $\rho>1$ is sufficient for the fake-direction response to exceed the
+true-direction response, and this guarantee now follows from a constraint
+that the optimization enforces, without any auxiliary condition. The
+previous sufficient condition $\rho>M_{\mathrm{tx}}/(M_{\mathrm{tx}}-1)$ is
+replaced by $\rho>1$.
+
+\textbf{(ii) Tractability.} In the CCCP update, (9g$'$) becomes
+$\rho\,\mathrm{Tr}(\mathbf{W}_k^H\mathbf{A}_k\mathbf{W}_k)
++\mathbf{z}_k^H\mathbf{A}_k\mathbf{z}_k-\widetilde{\zeta}_k\le0$, where
+$\widetilde{\zeta}_k$ is the affine lower bound of $F_k$. This is a convex
+quadratic constraint. Since $\widetilde{\zeta}_k\le F_k$ globally, every
+point feasible for the surrogate is feasible for (9g$'$), so the
+feasibility, monotonicity, and convergence arguments of Section~III-B carry
+over unchanged.
+
+\textbf{(iii) Resolvability.} The comparison in (10$'$) is meaningful only
+when the $M_{\mathrm{tx}}$-element array can resolve the true and fake
+directions. We now make this explicit by imposing (9g$'$) on
+$\mathcal{K}_{\mathrm{res}}=\{k:|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|\ge2/M_{\mathrm{tx}}\}$,
+i.e., on the APs whose two directions are at least one Rayleigh width
+apart. In the default geometry, the target and the virtual location are
+nearly collinear with three transmit APs, for which
+$|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|\approx0.03$--$0.04<2/M_{\mathrm{tx}}=0.125$.
+At these APs no distinguishable fake peak can be formed, and imposing the
+constraint would only consume sensing power. The remaining five APs satisfy
+the condition.
+
+\textbf{(iv) From the true direction to the dominant peak.} We agree that
+(10$'$) compares the fake direction with the true direction only, and that
+it holds for the ideal covariance. It does not guarantee that
+$\phi_{\mathrm{fake},k}$ is the global maximum over all $\theta$, since the
+beams of the other users produce responses in their own directions, and the
+finite number of snapshots and the EM reconstruction error add residual
+cross terms. We have therefore revised the manuscript to claim only what is
+guaranteed, namely that the fake-direction response exceeds the
+true-direction response, and we evaluate the location of the reconstructed
+dominant peak numerically. For localization deception, the relevant event is
+that the dominant peak is displaced from the true direction, since a peak
+elsewhere also removes that AP's direction line from the target cell. At
+$\eta\approx0.50$, over the APs in $\mathcal{K}_{\mathrm{res}}$, the
+reconstructed fake-direction response exceeds the true-direction response in
+$[X]\%$ of the cases, and the dominant peak lies at the fake direction, the
+true direction, and elsewhere in $[X]\%$, $[X]\%$, and $[X]\%$ of the cases,
+respectively.
+
+\textbf{(v) Updated results.} All results have been recomputed with
+(9g$'$). At $\eta\approx[X]$, the proposed design now reduces the
+localization success rate to $[X]\%$, with a sensing SNR of $[X]$~dB.
 \end{response}
-\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\revisionlocation{Section~III-B, problem (9) and the paragraph containing
+(10); the CCCP update (12); Section~IV-B, first paragraph. [Add page and line
+numbers.]}
 \begin{revisedtext}
-[Insert the relevant revised passage, if applicable.]
+\textit{Section III-B, constraint (9g):}
+\begin{equation*}
+\left|\mathbf{a}^H(\phi_{\mathrm{fake},k})\mathbf{z}_k\right|^2
+\ge\rho\left\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\right\|_F^2
++\left|\mathbf{a}^H(\phi_k)\mathbf{z}_k\right|^2,\;\forall k\in\mathcal{K}_{\mathrm{res}}.
+\end{equation*}
+
+\textit{Section III-B, paragraph containing (10):} ``With $\mathbf{W}_{-a,k}$
+denoting $\mathbf{W}_k$ without $\mathbf{w}_{a,k}$, define
+$S_k=\|\mathbf{a}^H(\phi_k)\mathbf{W}_{-a,k}\|_F^2$,
+$F_k=|\mathbf{a}^H(\phi_{\mathrm{fake},k})\mathbf{z}_k|^2$, and
+$T_k=|\mathbf{a}^H(\phi_k)\mathbf{z}_k|^2$. The ideal covariance
+decomposition gives $\widehat{B}_k(\phi_{\mathrm{fake},k})\ge F_k$ and
+$\widehat{B}_k(\phi_k)=S_k+T_k$, so (9g) yields
+\begin{equation*}
+\widehat{B}_k(\phi_{\mathrm{fake},k})-\widehat{B}_k(\phi_k)
+\ge F_k-S_k-T_k
+\ge(\rho-1)\left\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\right\|_F^2.
+\end{equation*}
+Hence, $\rho>1$ is sufficient for the fake-direction response to exceed the
+true-direction response. Since this comparison requires resolvable
+directions, (9g) is imposed on
+$\mathcal{K}_{\mathrm{res}}=\{k:|\sin\phi_k-\sin\phi_{\mathrm{fake},k}|\ge2/M_{\mathrm{tx}}\}$.
+The guarantee holds for the ideal covariance and relative to the true
+direction; the location of the reconstructed dominant peak under finite
+snapshots and reconstruction errors is evaluated in Section~IV.''
+
+\textit{Section III-B, CCCP update (12), last constraint:}
+``$\rho\,\mathrm{Tr}(\mathbf{W}_k^H\mathbf{A}_k\mathbf{W}_k)
++\mathbf{z}_k^H\mathbf{A}_k\mathbf{z}_k-\widetilde{\zeta}_k\le0,\
+\forall k\in\mathcal{K}_{\mathrm{res}}$.''
+
+\textit{Section IV-B:} ``By (10), $\rho>1$ is sufficient for the
+fake-direction response to exceed the true-direction response at the
+$|\mathcal{K}_{\mathrm{res}}|=5$ APs with resolvable directions.''
 \end{revisedtext}
 
 \begin{reviewcomment}

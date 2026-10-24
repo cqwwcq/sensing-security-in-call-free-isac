@@ -96,8 +96,19 @@ fusion with cell voting), `draw_nullonly_an.m`, `sensing_metrics.m`, `detection_
 Additions for the revision, beyond the published sweep:
 
 - **AN echo exploited** (Reviewer 2, Comment 1): `snrz_*`, plotted dashed in Fig. 3.
+- **Revised fake-peak constraint** (Reviewer 1, Comment 2): both solvers take
+  `opts.fake_tleak` (adds T_k = |a^H(φ_k) z_k|² to the right-hand side of (9g), so ρ > 1
+  guarantees the fake-direction response exceeds the true-direction one) and
+  `opts.fake_mask` (APs at which (9g) is imposed). `sim_config.m` turns both on
+  (`cfg.fake_tleak`, `cfg.fake_resolvable_only`); the mask keeps the APs whose true and fake
+  directions are at least one Rayleigh width apart, |sin φ_k − sin φ_fake,k| ≥ 2/M_tx. In the
+  default geometry this excludes the APs at (−200, 200), (200, −200) and (0, −200), which are
+  nearly collinear with the target and the fake location. Set both to `false` to reproduce
+  the published sweep.
 - **Fake-peak dominance** (Reviewer 1, Comment 2): `fdom_*`, the fraction of APs whose
-  reconstructed fake-direction response exceeds the true-direction response.
+  reconstructed fake-direction response exceeds the true-direction response, and `pkf_*` /
+  `pkt_*`, the fraction whose reconstructed dominant peak lies at the fake / true direction,
+  all over the APs with resolvable directions.
 - **Detection probability** (Reviewer 3, Comment 2): `pd_*`, GLRT over the Nue+1 known
   streams with Swerling-I echo draws on the designed beams, for N ∈ {5, 128} and RCS
   offsets −30…0 dB. `plot_detection_pd.m` overlays the closed-form model quoted in the

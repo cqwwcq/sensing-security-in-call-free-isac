@@ -54,6 +54,10 @@ cfg.mirror_rule = 'random';   % ULA front-back ambiguity: 'random' or 'both'
 cfg.rho_list = [0.05 0.15 0.3 0.5 0.75 1.05 1.5 2.2 3.5];
 cfg.sym_null_prop = true;     % enforce (9f) in the proposed design, as the
                               % paper states; the published sweep used false
+cfg.fake_tleak = true;        % revised (9g) with T_k on the right-hand side
+                              % (Reviewer 1, Comment 2); published: false
+cfg.fake_resolvable_only = true;  % impose (9g) only at APs with resolvable
+                              % true and fake directions; published: false
 cfg.solver_opts = struct('max_iter', 30, 'tol', 4e-3);
 
 % --- Detection probability (Reviewer 3, Comment 2) ---

@@ -12,8 +12,11 @@ function [success, err, est, dom] = localize_target(cfg, geo, R)
 %
 %   success  estimate lies in the target's cell
 %   err      distance between the estimated cell center and the target
-%   dom      per-AP diagnostics: dominant angle and whether the reconstructed
-%            fake-direction response exceeds the true-direction response
+%   dom      per-AP diagnostics: dominant angle, whether the reconstructed
+%            fake-direction response exceeds the true-direction response,
+%            and where the dominant peak lies (peak_class: 1 fake direction,
+%            2 true direction, 3 elsewhere; within half a main lobe,
+%            |sin(theta) - sin(phi)| <= 1/Mtx, which also covers the mirror)
 
 Ntx = cfg.Ntx; Mtx = cfg.Mtx; cs = cfg.cell_size; A = cfg.area;
 theta = linspace(-pi, pi, cfg.n_ang);
@@ -24,12 +27,20 @@ ny = round((A(4) - A(3)) / cs);
 votes = zeros(nx, ny);
 dom.theta_hat = zeros(1, Ntx);
 dom.fake_dominant = false(1, Ntx);
+dom.peak_class = zeros(1, Ntx);
 
 for k = 1:Ntx
     Rk = R(:, :, k);
     B = real(sum((conj(At) * Rk) .* At, 2));
     [~, idx] = max(B);
     th = theta(idx);
+    if abs(sin(th) - sin(geo.phi(k))) <= 1/Mtx
+        dom.peak_class(k) = 2;
+    elseif abs(sin(th) - sin(geo.phi_fake(k))) <= 1/Mtx
+        dom.peak_class(k) = 1;
+    else
+        dom.peak_class(k) = 3;
+    end
     cand = [th, angle(exp(1j*(pi - th)))];
     cells = cell(1, 2);
     valid = false(1, 2);

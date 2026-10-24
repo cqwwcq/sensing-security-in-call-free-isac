@@ -498,31 +498,37 @@ should be related to detection performance. The revised manuscript now
 specifies the detector and reports the corresponding detection
 probabilities.
 
-\textbf{Detector.} With unknown echo amplitudes and phases at the receive
-APs, the generalized likelihood ratio test sums the matched-filter output
-energies of the $N_{\mathrm{rx}}$ receive APs and compares the sum with a
-threshold $\tau$. After normalization, the statistic follows a central
-$\chi^2$ distribution with $2N_{\mathrm{rx}}$ degrees of freedom under the
-null hypothesis, so $\tau$ is set by $\Pr\{\chi^2_{2N_{\mathrm{rx}}}>\tau\}=P_{\mathrm{fa}}$.
-Under the target hypothesis, it follows a noncentral $\chi^2$ distribution
-with noncentrality $2N\sum_r\gamma_r$, which gives
+\textbf{Detector.} Each receive AP matched-filters its samples with the
+$N_{\mathrm{s}}=N_{\mathrm{UE}}+1$ known data and sensing streams. With
+unknown echo amplitudes and phases, the generalized likelihood ratio test
+sums the matched-filter output energies over the $N_{\mathrm{s}}$ streams and
+the $N_{\mathrm{rx}}$ receive APs, and compares the sum with a threshold
+$\tau$. After normalization, the statistic follows a central $\chi^2$
+distribution with $2N_{\mathrm{rx}}N_{\mathrm{s}}$ degrees of freedom under
+the null hypothesis, so $\tau$ is set by
+$\Pr\{\chi^2_{2N_{\mathrm{rx}}N_{\mathrm{s}}}>\tau\}=P_{\mathrm{fa}}$. Under
+the target hypothesis, it follows a noncentral $\chi^2$ distribution with
+noncentrality $2N\sum_r\gamma_r$, which gives
 \begin{equation*}
-P_{\mathrm{d}}=\mathbb{E}\Big\{Q_{N_{\mathrm{rx}}}\Big(\sqrt{2N{\textstyle\sum_r}\gamma_r},\sqrt{\tau}\Big)\Big\},
+P_{\mathrm{d}}=\mathbb{E}\Big\{Q_{N_{\mathrm{rx}}N_{\mathrm{s}}}\Big(\sqrt{2N{\textstyle\sum_r}\gamma_r},\sqrt{\tau}\Big)\Big\},
 \end{equation*}
-where $Q_{N_{\mathrm{rx}}}(\cdot,\cdot)$ is the generalized Marcum
-$Q$-function. Consistent with the random echo phases of the sensing model,
-the per-receive-AP SNRs $\gamma_r$ are taken as independent and exponentially
+where $Q_{M}(\cdot,\cdot)$ is the generalized Marcum $Q$-function of order
+$M$. Consistent with the random echo phases of the sensing model, the
+per-receive-AP SNRs $\gamma_r$ are taken as independent and exponentially
 distributed with mean $\gamma_t$, and the expectation is over this
-fluctuation.
+fluctuation. Among fluctuation models with the same mean, this is a
+conservative choice in the high-$P_{\mathrm{d}}$ regime.
 
-\textbf{Detection performance.} For $P_{\mathrm{fa}}=10^{-6}$ and
-$N_{\mathrm{rx}}=4$, a single snapshot yields $P_{\mathrm{d}}=0.994$ for the
-no-AN reference ($\gamma_t=14.7$~dB) and $P_{\mathrm{d}}=0.929$ for the
-proposed design at $\eta\approx0.50$ ($\gamma_t=11.1$~dB). With integration
-over the $N=128$ snapshots, both designs achieve $P_{\mathrm{d}}>0.999$,
-since $P_{\mathrm{d}}=0.9$ then requires only $\gamma_t\ge-10.6$~dB.
-The $3.6$~dB loss therefore reduces the detection margin rather than the
-detection probability in the default setting.
+\textbf{Detection performance.} For $P_{\mathrm{fa}}=10^{-6}$,
+$N_{\mathrm{rx}}=4$, and $N_{\mathrm{s}}=5$, $P_{\mathrm{d}}=0.9$ requires
+$\gamma_t\ge-8.5$~dB with integration over the $N=128$ snapshots. The
+proposed design at $\eta\approx0.50$ ($\gamma_t=11.1$~dB) therefore retains
+a margin of $19.6$~dB, compared with $23.2$~dB for the no-AN reference
+($\gamma_t=14.7$~dB), and both designs achieve $P_{\mathrm{d}}>0.999$. Even
+with the shortest integration that resolves all streams, $N=N_{\mathrm{s}}=5$,
+the proposed design achieves $P_{\mathrm{d}}=0.998$, compared with $0.9999$
+for the no-AN reference. The $3.6$~dB loss therefore reduces the detection
+margin rather than the detection probability in the default setting.
 
 \textbf{Practical interpretation.} Since the two-way path gain $g_{r,k}$
 scales with the fourth power of distance, a $3.6$~dB loss corresponds to an
@@ -538,16 +544,16 @@ numbers.]}
 \begin{revisedtext}
 \textit{Section IV-B:} ``To relate these values to detection performance, we
 consider the generalized likelihood ratio test at the central processor,
-which sums the matched-filter output energies of the $N_{\mathrm{rx}}$
-receive APs, with the threshold set for $P_{\mathrm{fa}}=10^{-6}$. With
-per-receive-AP SNRs exponentially distributed around $\gamma_t$ due to the
-random echo phases, a single snapshot yields $P_{\mathrm{d}}=0.994$ for the
-no-AN reference and $0.929$ for the proposed design at $\eta\approx0.50$,
-while integration over the $N=128$ snapshots yields $P_{\mathrm{d}}>0.999$
-for both, since $P_{\mathrm{d}}=0.9$ then requires only $\gamma_t\ge-10.6$~dB.
-The $3.6$~dB loss thus reduces the detection margin rather than the
-detection probability, and corresponds to an approximately $19\%$ reduction
-of the supported bistatic distances at fixed
+which sums the matched-filter output energies over the $N_{\mathrm{UE}}+1$
+known streams and the $N_{\mathrm{rx}}$ receive APs, with the threshold set
+for $P_{\mathrm{fa}}=10^{-6}$. With per-receive-AP SNRs exponentially
+distributed around $\gamma_t$ due to the random echo phases,
+$P_{\mathrm{d}}=0.9$ requires $\gamma_t\ge-8.5$~dB over $N=128$ snapshots,
+so the proposed design at $\eta\approx0.50$ retains a $19.6$~dB margin,
+compared with $23.2$~dB without AN, and both achieve
+$P_{\mathrm{d}}>0.999$. The $3.6$~dB loss thus reduces the detection margin
+rather than the detection probability, and corresponds to an approximately
+$19\%$ reduction of the supported bistatic distances at fixed
 $(P_{\mathrm{d}},P_{\mathrm{fa}})$.''
 \end{revisedtext}
 

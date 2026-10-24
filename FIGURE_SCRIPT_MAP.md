@@ -68,24 +68,59 @@ The sensing SNR in Fig. 3 is the mean of per-realization dB values, not the dB v
 
 The four curves are no-AN, null-space-only, proposed nominal and proposed robust.
 
-## Missing to regenerate the figures
+## Regenerating the figures
 
-None of the figures can be regenerated from the repo alone. The uploaded files are the
-solver functions and the saved results; these pieces are not included:
+The original sweep drivers, plot scripts and helpers were not uploaded. They have been
+rewritten for the revision from the paper, the solver interfaces and the `cfg` structs
+saved in the result files. They have **not** been run with CVX yet, so their numbers
+will not match the published ones exactly until the [ASSUMED] settings below are
+replaced with the original values.
 
-- **Sweep drivers** that create `detection_sweep.mat` / `detection_results.mat` and
-  `outage_results.mat` (channel and position generation, LMMSE estimation, CSI-error
-  draws, the ρ and NMSE loops, outage evaluation).
-- **Plot scripts** that write `localization_success_tvt.pdf`, `sensing_snr_final.pdf` and
-  `outage_vs_nmse.pdf`.
+Run from MATLAB, in this order:
+
+| Step | Script | Output |
+|---|---|---|
+| 1 | `fig.7.detection/run_detection_sweep.m` | `detection_sweep.mat` |
+| 2 | `fig.7.detection/make_detection_results.m` | `detection_results.mat`, printout of the quoted values |
+| 3 | `fig.7.detection/plot_localization_success.m` | `figure/localization_success_tvt.pdf` (Fig. 2) |
+| 4 | `fig.7.detection/plot_sensing_snr.m` | `figure/sensing_snr_final.pdf` (Fig. 3) |
+| 5 | `fig.7.detection/plot_detection_pd.m` | `fig.7.detection/detection_pd_response.pdf` (response letter) |
+| 6 | `fig.9.outage/run_outage_sweep.m` | `outage_results.mat` |
+| 7 | `fig.9.outage/plot_outage.m` | `figure/outage_vs_nmse.pdf` (Fig. 4), printout |
+
+Shared helpers are in `common/`: `sim_config.m` (all parameters), `setup_geometry.m`,
+`gen_channels.m` (LMMSE pilots or fixed NMSE), `localize_target.m` (dominant-peak line
+fusion with cell voting), `draw_nullonly_an.m`, `sensing_metrics.m`, `detection_pd.m`,
+`wilson_ci.m`, `paper_fig_style.m`, and copies of `beamsteering.m` / `compute_angle_dist.m`.
+
+Additions for the revision, beyond the published sweep:
+
+- **AN echo exploited** (Reviewer 2, Comment 1): `snrz_*`, plotted dashed in Fig. 3.
+- **Fake-peak dominance** (Reviewer 1, Comment 2): `fdom_*`, the fraction of APs whose
+  reconstructed fake-direction response exceeds the true-direction response.
+- **Detection probability** (Reviewer 3, Comment 2): `pd_*`, GLRT over the Nue+1 known
+  streams with Swerling-I echo draws on the designed beams, for N ∈ {5, 128} and RCS
+  offsets −30…0 dB. `plot_detection_pd.m` overlays the closed-form model quoted in the
+  response letter, as a check of those numbers.
+- **Robust no-AN baseline** (Reviewer 1, Comment 5): `m_rnoan` / `m_srn` in the outage sweep.
+- **Fixes from the points below**: (9f) is enforced in the proposed design
+  (`cfg.sym_null_prop = true`; set `false` to match the published sweep), and the adversary's
+  noise is drawn independently per snapshot.
+
+Settings marked [ASSUMED] in `common/sim_config.m` are not stated in the paper: the path-loss
+exponent 3 and RCS 10 dBsm (from the earlier multi-static paper in this repo), the UE positions,
+the AP ordering, the 400 m × 400 m search area, and how the ULA front-back ambiguity is resolved
+(`cfg.mirror_rule`). The no-AN localization success (35.8 % in the paper) is the most sensitive
+check of these.
+
+Still missing:
+
 - **MI-minimizing (Zou et al.) baseline.** No solver mode implements it:
   `AN_run_optimization_mi.m` only has `'fake'`, `'none'` and `'nullonly'`, despite its name.
-- **Helpers used by Figs. 2–3**: geometry and large-scale fading (formerly `Parameters.m`),
-  symbol generation (formerly `signalgeneration.m`), dominant-peak line fusion and grid
-  voting (formerly `LinesCont.m`), and `beamsteering.m` / `compute_angle_dist.m` (present only
-  in `fig.9.outage/`).
-- MATLAB toolboxes needed: CVX for the solvers; Statistics (`gamrnd`, `normrnd`) for `AN_Em.m`;
-  Parallel Computing for the parallel sweeps.
+  `run_detection_sweep.m` calls `AN_run_optimization_zou.m` (same arguments and first seven
+  outputs as `AN_run_optimization_mi.m`) if it is on the path, and skips the baseline otherwise.
+- MATLAB toolboxes needed: CVX for the solvers; Statistics (`gamrnd`, `normrnd`, `chi2inv`,
+  `ncx2cdf`); Parallel Computing for the parallel sweeps (`cfg.use_parfor`).
 
 ## Points to check against the paper
 

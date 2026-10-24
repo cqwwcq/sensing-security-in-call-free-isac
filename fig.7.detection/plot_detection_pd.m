@@ -25,7 +25,7 @@ off = cfg.pd_offset_dB;
 Ns = cfg.Nue + 1;
 df = 2 * cfg.Nrx * Ns;
 tau = chi2inv(1 - cfg.Pfa, df);
-G = sum(-log(rand(2e5, cfg.Nrx)), 2);        % sum of Nrx unit exponentials
+G = sum(-log(rand(5e4, cfg.Nrx)), 2);        % sum of Nrx unit exponentials
 pd_model = @(g_dB, N) arrayfun(@(o) ...
     mean(ncx2cdf(tau, df, 2*N*10^((g_dB + o)/10)*G, 'upper')), off);
 

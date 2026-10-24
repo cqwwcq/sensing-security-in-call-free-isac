@@ -101,7 +101,7 @@ for j = 1:nm
             case 'nom'
                 [w_i, w_t, u, z, okd] = solve(cfg, geo, ch, ...
                     struct('an_mode', 'fake', 'sym_null', cfg.sym_null_prop));
-                nom = struct('w_i', w_i, 'w_t', w_t, 'u', u, 'z', z);
+                nom = struct('w_i', w_i, 'w_t', w_t, 'u', {u}, 'z', z);
             case 'null'
                 continue;                 % filled in after 'nom'
             case 'rob'

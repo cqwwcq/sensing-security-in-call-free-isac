@@ -1,4 +1,4 @@
-function run_sync_sweep(out_file)
+function run_sync_sweep(out_file, overrides)
 %RUN_SYNC_SWEEP Robustness of the effective-channel null to AP phase errors.
 %
 %   Reviewer 2, Comment 4.  The beams are designed on the LMMSE estimates of
@@ -18,11 +18,18 @@ function run_sync_sweep(out_file)
 %                             with c_k = u_i^H H_{i,k} z_k
 %   The sensing SNR (2) is unaffected, since it combines the transmit APs
 %   non-coherently, and so is the attack, which works per AP.
+%
+%   RUN_SYNC_SWEEP(out_file, overrides) writes to out_file ('' for the
+%   default) and replaces any cfg setting by the fields of the struct
+%   overrides, e.g. struct('num_runs', 1, 'use_parfor', false).
 
 here = fileparts(mfilename('fullpath'));
 addpath(here, fullfile(here, '..', 'common'));
-if nargin < 1
+if nargin < 1 || isempty(out_file)
     out_file = fullfile(here, 'sync_results.mat');
+end
+if nargin < 2
+    overrides = struct();
 end
 
 cfg = sim_config();
@@ -31,6 +38,7 @@ cfg.sync_std_deg = [0 1 2 5 10 20];
 cfg.num_runs = 100;
 cfg.num_phase = 1000;
 cfg.base_seed = 20260825;
+cfg = apply_overrides(cfg, overrides);
 geo = setup_geometry(cfg);
 
 R = cfg.num_runs;

@@ -76,7 +76,8 @@ saved in the result files. They have **not** been run with CVX yet, so their num
 will not match the published ones exactly until the [ASSUMED] settings below are
 replaced with the original values.
 
-Run from MATLAB, in this order:
+Run from MATLAB, in this order (step-by-step commands, checks and run times are in
+[`RUN_SIMULATIONS.md`](RUN_SIMULATIONS.md)):
 
 | Step | Script | Output |
 |---|---|---|

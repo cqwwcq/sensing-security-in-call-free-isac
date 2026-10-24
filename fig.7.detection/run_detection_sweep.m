@@ -1,4 +1,4 @@
-function run_detection_sweep(out_file)
+function run_detection_sweep(out_file, overrides)
 %RUN_DETECTION_SWEEP Sweep behind Figs. 2-3: localization success and SNR vs eta.
 %
 %   RUN_DETECTION_SWEEP() runs cfg.num_runs channel realizations.  In each,
@@ -38,16 +38,24 @@ function run_detection_sweep(out_file)
 %   Requires CVX, the Statistics and Machine Learning Toolbox, and, for
 %   cfg.use_parfor, the Parallel Computing Toolbox with CVX set up on the
 %   workers.
+%
+%   RUN_DETECTION_SWEEP(out_file, overrides) writes to out_file ('' for the
+%   default) and replaces any cfg setting by the fields of the struct
+%   overrides, e.g. struct('num_runs', 1, 'use_parfor', false).
 
 here = fileparts(mfilename('fullpath'));
 addpath(here, fullfile(here, '..', 'common'));
-if nargin < 1
+if nargin < 1 || isempty(out_file)
     out_file = fullfile(here, 'detection_sweep.mat');
+end
+if nargin < 2
+    overrides = struct();
 end
 
 cfg = sim_config();
 cfg.num_runs = 500;
 cfg.base_seed = 20260823;
+cfg = apply_overrides(cfg, overrides);
 assert(cfg.N_snapshot == 128, 'AN_Em.m is hard-coded for 128 snapshots.');
 assert(cfg.adversary == 1, 'AN_Em.m treats user 1 as the adversary.');
 geo = setup_geometry(cfg);

@@ -1,4 +1,4 @@
-function run_comm_tradeoff(out_file)
+function run_comm_tradeoff(out_file, overrides)
 %RUN_COMM_TRADEOFF What the AN power costs in communication (Reviewer 3, C3).
 %
 %   For each channel realization, the proposed design is solved at
@@ -14,11 +14,18 @@ function run_comm_tradeoff(out_file)
 %     rate_prop      sum rate of the proposed design
 %     snr_prop_dB    sensing SNR of the proposed design (2)
 %     eta_prop       realized AN-power ratio of the proposed design
+%
+%   RUN_COMM_TRADEOFF(out_file, overrides) writes to out_file ('' for the
+%   default) and replaces any cfg setting by the fields of the struct
+%   overrides, e.g. struct('num_runs', 1, 'use_parfor', false).
 
 here = fileparts(mfilename('fullpath'));
 addpath(here, fullfile(here, '..', 'common'));
-if nargin < 1
+if nargin < 1 || isempty(out_file)
     out_file = fullfile(here, 'comm_tradeoff.mat');
+end
+if nargin < 2
+    overrides = struct();
 end
 
 cfg = sim_config();
@@ -27,6 +34,7 @@ cfg.gamma_hi_dB = cfg.Gamma_comm + 30;   % upper end of the bisection
 cfg.bisect_iter = 7;                     % 30 dB / 2^7, about 0.23 dB
 cfg.num_runs = 100;
 cfg.base_seed = 20260826;
+cfg = apply_overrides(cfg, overrides);
 geo = setup_geometry(cfg);
 
 R = cfg.num_runs;

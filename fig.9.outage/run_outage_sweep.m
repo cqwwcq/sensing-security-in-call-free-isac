@@ -1,4 +1,4 @@
-function run_outage_sweep(out_file)
+function run_outage_sweep(out_file, overrides)
 %RUN_OUTAGE_SWEEP Sweep behind Fig. 4: communication outage vs CSI NMSE.
 %
 %   For each NMSE and channel realization, the beams are designed on an
@@ -19,11 +19,18 @@ function run_outage_sweep(out_file)
 %   Since ||u_i|| = 1 and E_{i,k} has i.i.d. CN(0, nmse*beta_ik) entries,
 %   u_i^H E_{i,k} has i.i.d. CN(0, nmse*beta_ik) entries, so the error is
 %   drawn directly on the effective channels.
+%
+%   RUN_OUTAGE_SWEEP(out_file, overrides) writes to out_file ('' for the
+%   default) and replaces any cfg setting by the fields of the struct
+%   overrides, e.g. struct('num_runs', 1, 'use_parfor', false).
 
 here = fileparts(mfilename('fullpath'));
 addpath(here, fullfile(here, '..', 'common'));
-if nargin < 1
+if nargin < 1 || isempty(out_file)
     out_file = fullfile(here, 'outage_results.mat');
+end
+if nargin < 2
+    overrides = struct();
 end
 
 cfg = sim_config();
@@ -33,6 +40,7 @@ cfg.num_runs = 300;
 cfg.num_err = 3000;
 cfg.base_seed = 20260824;
 cfg.include_robust_noan = true;
+cfg = apply_overrides(cfg, overrides);
 geo = setup_geometry(cfg);
 
 designs = {'noan', 'null', 'nom', 'rob'};

@@ -1,0 +1,17 @@
+Saved results/validate_published_results.npz
+No AN: success 97.00 %, sensing SNR 14.82 dB
+eta = 0.534 (rho = 0.75):
+  proposed : success 2.00 %, SNR 11.33 dB, SNR with AN echo 12.37 dB, fake peak dominant at 69 % of APs
+  proposed : dominant peak at fake / true / elsewhere: 68 / 31 / 1 % of APs (no AN: 100 % at true)
+  10 m cells: success no AN 98.0 %, proposed 3.0 %, null-only 93.0 %
+  20 m cells: success no AN 89.0 %, proposed 11.0 %, null-only 87.0 %
+  50 m cells: success no AN 100.0 %, proposed 4.0 %, null-only 100.0 %
+  estimates in the virtual location's cell: no AN 0.0 %, proposed 55.0 %
+  multi-hypothesis attack, success with votes / random / aware rule / two guesses:
+    no AN   :  94.0 /  86.0 /  86.0 /  94.0 %
+    proposed (rho = 0.75, eta = 0.534):  32.0 /  30.0 /  55.0 /  67.0 %
+    proposed (rho = 1.05, eta = 0.628):  11.0 /  30.0 /  55.0 /  56.0 %
+  null-only: success 92.00 %, SNR 11.45 dB (its own eta 0.456)
+  Pd (Pfa = 1e-06, N = 5): no AN 1.0000, proposed 0.9993
+  Pd (Pfa = 1e-06, N = 128): no AN 1.0000, proposed 1.0000
+  EM iteration cap reached in 0 snapshots in total

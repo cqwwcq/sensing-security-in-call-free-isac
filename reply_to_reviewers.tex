@@ -13,8 +13,8 @@
 
 % Replace every bracketed placeholder before submission.
 \newcommand{\manuscriptID}{[Manuscript ID]}
-\newcommand{\manuscriptTitle}{[Manuscript title]}
-\newcommand{\journalName}{[Journal name]}
+\newcommand{\manuscriptTitle}{Fake-Peak Artificial Noise for Sensing-Location Privacy in Cell-Free Massive MIMO ISAC}
+\newcommand{\journalName}{IEEE Transactions on Vehicular Technology (Correspondence)}
 \newcommand{\authorName}{[Corresponding author's name]}
 
 % Use \reviewer{Editor} or \reviewer{Reviewer 1}, etc.
@@ -54,15 +54,43 @@ Thank you for your time and constructive comments on our manuscript.
 We provide a point-by-point response below, explaining the changes made
 and identifying their locations in the revised manuscript.
 
-[Describe how revisions are marked in the manuscript, if applicable.
-State whether page and line numbers refer to the clean or marked version.]
+All revised passages are highlighted in blue in the marked version of the
+revised manuscript, and the page and line numbers in this response refer to
+that version. Reference numbers refer to the reference list of the revised
+manuscript, and equation numbers to the original manuscript unless stated
+otherwise.
 
 The main revisions are summarized as follows:
 \begin{enumerate}
-  \item [Summarize the first major revision.]
-  \item [Summarize the second major revision.]
-  \item [Add or remove items as needed.]
+  \item \emph{Threat model.} The per-AP separation of the adversary is now
+  stated as a genie-aided strong-adversary assumption, and the
+  identifiability condition of the per-AP reconstruction is given
+  (Reviewer~1, Comment~1; Reviewer~2, Comment~2).
+  \item \emph{Sensing model.} The receive processing, the phase-averaged
+  sensing SNR, the treatment of the AN echo, and the detector are now
+  specified, and the sensing-SNR loss is translated into detection
+  probabilities (Reviewer~1, Comment~4; Reviewer~2, Comment~1; Reviewer~3,
+  Comments~1, 2, and 5).
+  \item \emph{Fake-peak constraint.} The constraint now includes the
+  true-direction AN response, so that $\rho>1$ guarantees that the
+  fake-direction response exceeds the true-direction one, and the virtual
+  location is chosen such that all transmit APs resolve the two directions
+  (Reviewer~1, Comment~2).
+  \item \emph{Privacy evaluation and claims.} A multi-hypothesis adversary
+  is evaluated, the property that governs it is identified, the claims are
+  narrowed to what is guaranteed, and the estimated locations are
+  visualized (Reviewer~1, Comment~3; Reviewer~2, Comment~5).
+  \item \emph{Baselines and tradeoffs.} A robust no-AN baseline, a no-AN
+  alternative that spends the AN power on communication, and a more
+  favorable adversary are evaluated (Reviewer~1, Comment~5; Reviewer~3,
+  Comments~3 and 4).
+  \item \emph{Synchronization.} The effect of residual inter-AP phase
+  offsets on the effective-channel null is analyzed in closed form and
+  evaluated numerically (Reviewer~2, Comment~4).
+  \item \emph{Literature and minor corrections} (Reviewer~2, Comment~3 and
+  minor corrections; Reviewer~3, Comment~5).
 \end{enumerate}
+All numerical results have been recomputed with the revised design.
 
 Thank you for considering our revised manuscript.
 
@@ -71,20 +99,16 @@ Yours sincerely,\\[0.5em]
 \authorName\\
 On behalf of all authors
 
-% Delete this section if there are no separate editorial comments.
-\reviewer{the Editor}
-\begin{reviewcomment}
-[Insert the editor's comment verbatim.]
-\end{reviewcomment}
-\begin{response}
-[Provide a direct response and describe the action taken.
-If no change was made, explain the reason with supporting evidence.]
-\end{response}
-\revisionlocation{[Section, page, and line numbers, or not applicable.]}
-% Delete the revisedtext block when no quoted revision is needed.
-\begin{revisedtext}
-[Insert the relevant revised passage, if applicable.]
-\end{revisedtext}
+% Editor section: uncomment and fill in if the decision letter contains
+% comments from the Editor or the Associate Editor.
+% \reviewer{the Editor}
+% \begin{reviewcomment}
+% [Insert the editor's comment verbatim.]
+% \end{reviewcomment}
+% \begin{response}
+% [Provide a direct response and describe the action taken.]
+% \end{response}
+% \revisionlocation{[Section, page, and line numbers, or not applicable.]}
 
 \reviewer{Reviewer 1}
 \begin{reviewcomment}
@@ -106,7 +130,7 @@ possible in general, and we do not claim otherwise. The original manuscript
 did not state clearly that this step is an assumption, and we have revised
 the threat model accordingly.
 
-Following the threat model of [12], the revised manuscript explicitly adopts
+Following the threat model of [14], the revised manuscript explicitly adopts
 a \emph{genie-aided strong-adversary model}, in which the per-AP components
 of the received samples are made available to the adversary. We adopt this
 model deliberately, for the following reasons.
@@ -144,7 +168,7 @@ numbers.]}
 $\mathbf{y}_a[n]$ offers only $M_{\mathrm{UE}}$ dimensions for
 $N_{\mathrm{tx}}M_{\mathrm{tx}}$ per-AP transmit dimensions, so its per-AP
 decomposition is not identifiable from $\mathbf{y}_a[n]$ alone in general.
-Following [12], we therefore adopt a genie-aided strong-adversary model in
+Following [14], we therefore adopt a genie-aided strong-adversary model in
 which the per-AP components of the received samples are available to the
 adversary, as may occur when AP-specific transmissions are resolvable in
 time, frequency, or delay. Since the network cannot verify the receiver
@@ -311,7 +335,7 @@ We thank the reviewer for these two suggestions, both of which we have
 followed.
 
 \textbf{More sophisticated localization strategies.} In addition to the
-dominant-peak attack of [12], the revised manuscript evaluates a
+dominant-peak attack of [14], the revised manuscript evaluates a
 multi-hypothesis adversary. It retains the two strongest distinct peaks of
 each reconstructed beampattern $\widehat{B}_k(\theta)$, casts one direction
 line per peak, and forms the two most-voted, geometrically separated
@@ -552,7 +576,7 @@ into two stages and to state the identifiability status of each.
 
 \textbf{(i) Per-AP separation (assumed).} The separation of
 $\mathbf{y}_a[n]$ into per-AP components is not identifiable from
-$\mathbf{y}_a[n]$ alone in general. Following [12], we now state explicitly
+$\mathbf{y}_a[n]$ alone in general. Following [14], we now state explicitly
 that we adopt a genie-aided strong-adversary model, in which the per-AP
 observations $\widetilde{\mathbf{y}}_{a,k}[n]$ are available to the
 adversary. The genie removes the inter-AP superposition, which is the main
@@ -583,7 +607,7 @@ the adversary recovers only the projection of
 $\mathbf{R}_{\widetilde{\mathbf{x}}_k}$ onto the row space of
 $\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$, and the reconstructed
 beampattern is distorted, which further favors the defender. The EM routine
-of [12] jointly refines the channel and signal estimates within this per-AP
+of [14] jointly refines the channel and signal estimates within this per-AP
 linear model. It does not resolve the inter-AP superposition, which is
 removed by the genie.
 
@@ -605,7 +629,7 @@ $\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$ of its channel
 $\mathbf{H}_{a,k}$. Since all APs transmit common symbols, $\mathbf{y}_a[n]$
 offers only $M_{\mathrm{UE}}$ dimensions for $N_{\mathrm{tx}}M_{\mathrm{tx}}$
 per-AP transmit dimensions, so its per-AP decomposition is not identifiable
-from $\mathbf{y}_a[n]$ alone in general. Following [12], we therefore adopt a
+from $\mathbf{y}_a[n]$ alone in general. Following [14], we therefore adopt a
 genie-aided strong-adversary model in which the per-AP components of the
 received samples are available to the adversary, as may occur when
 AP-specific transmissions are resolvable in time, frequency, or delay. Since
@@ -630,14 +654,28 @@ covariance over the available snapshots.''
 \end{revisedtext}
 
 \begin{reviewcomment}
-[Insert the reviewer's third comment verbatim.]
+The literature review should be improved with recent works on multi-static
+ISAC:\\
+R1--- A. Chowdhury, S. S. Thoota and E. G. Larsson, ``Joint Sensing and
+Bi-Directional Communication With Dynamic TDD Enabled Cell-Free MIMO,'' in
+IEEE Transactions on Wireless Communications, vol. 25, pp. 2420--2434, 2026,
+doi: 10.1109/TWC.2025.3596622.\\
+R2---- X. Sun et al., ``Performance Analysis and Optimization for
+Network-Assisted Full-Duplex Cell-Free Multi-Static ISAC Systems,'' in IEEE
+Transactions on Green Communications and Networking, vol. 10, pp. 272--288,
+2026, doi: 10.1109/TGCN.2025.3575837.
 \end{reviewcomment}
 \begin{response}
-[Provide the response and describe any resulting changes.]
+We thank the reviewer for pointing out these recent works. Both are now
+discussed and cited in the introduction as [4] and [5], as examples of
+multi-static cell-free ISAC with dynamic time-division duplexing and with
+network-assisted full-duplex operation, respectively.
 \end{response}
-\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\revisionlocation{Section~I, first paragraph. [Add page and line numbers.]}
 \begin{revisedtext}
-[Insert the relevant revised passage, if applicable.]
+\textit{Section I:} ``Multi-static cell-free ISAC has further been studied
+with dynamic time-division duplexing for joint sensing and bidirectional
+communication [4] and with network-assisted full-duplex operation [5].''
 \end{revisedtext}
 
 \begin{reviewcomment}
@@ -691,9 +729,11 @@ with the closed form to within $[X]$~dB. The outage probability of the
 proposed design is $[X]\%$, $[X]\%$, $[X]\%$, $[X]\%$, and $[X]\%$, compared
 with $[X]\%$, $[X]\%$, $[X]\%$, $[X]\%$, and $[X]\%$ for the no-AN baseline.
 The receive-processing asymmetry is thus preserved for phase errors up to
-about $[X]^\circ$, which is within the synchronization accuracy reported for
-distributed MIMO systems [ref]. Beyond this, the robust extension above is
-required.
+about $[X]^\circ$. Residual phase errors of this kind are what over-the-air
+synchronization and reciprocity-calibration protocols for distributed MIMO
+address [16], and the analysis above specifies the accuracy they must
+achieve for the proposed design. Beyond this accuracy, the robust extension
+above is required.
 \end{response}
 \revisionlocation{Section~III-C, new remark after (20); Section~IV-B. [Add
 page and line numbers.]}
@@ -704,8 +744,10 @@ $\psi_k\sim\mathcal{N}(0,\sigma_\psi^2)$ break the coherent cancellation in
 $(1-e^{-\sigma_\psi^2})\sum_k|\widehat{\mathbf{g}}_{i,k}^H\mathbf{z}_k|^2$ at
 the output of combiner $i$. Since this term is a convex quadratic form, it
 can be added to $\overline{\mathcal{I}}_i$ in the same way as
-$L_i^{\mathrm{csi}}$. The sensing SNR (2) and the attack, which process the
-transmit APs separately, are unaffected.''
+$L_i^{\mathrm{csi}}$. Such phase offsets are the target of over-the-air
+synchronization protocols for distributed MIMO [16]. The sensing SNR (2)
+and the attack, which process the transmit APs separately, are
+unaffected.''
 
 \textit{Section IV-B:} ``With phase standard deviations up to $[X]^\circ$,
 the residual AN stays $[X]$~dB below the noise and the outage of the
@@ -727,7 +769,7 @@ sensing-location privacy in a broader sense.
 \begin{response}
 We thank the reviewer for this insightful comment and agree with its
 conclusion. The reported reduction certifies robustness against the
-dominant-peak reconstruction rule of [12], and we have revised the claims of
+dominant-peak reconstruction rule of [14], and we have revised the claims of
 the manuscript accordingly. Below, we identify the property that governs a
 multi-hypothesis adversary, state what the proposed design can and cannot
 guarantee against it, and report its performance against such an adversary.
@@ -829,6 +871,70 @@ success rate of the dominant-peak reconstruction attack from $35.8\%$ to
 $[X]\%$ \ldots{} Against a multi-hypothesis adversary, it creates ambiguity
 between the true and virtual locations, whose level is controlled by
 $\rho$.''
+\end{revisedtext}
+
+\begin{reviewcomment}
+Minor corrections. In (7), the stated null-space dimensions
+$d_{\mathrm{phys}}$ and $d_{\mathrm{eff}}$ hold under the implicit assumption
+that the corresponding stacked channel matrices have full possible row rank;
+otherwise these should be presented as generic-dimension expressions rather
+than unconditional equalities. In the imperfect-CSI discussion,
+``independent of $\hat{\mathbf H}$ and across links, with i.i.d. entries''
+should distinguish independence across links from identical variances,
+since $\beta_{e,i,k}$ is link dependent. It would also be useful to state
+explicitly the feasibility condition $\operatorname{rank}(\mathbf{Q}_i)$
+[\ldots]
+% The comment is cut off here in our copy (comments.txt); complete it from
+% the decision letter.
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for these careful corrections, which we have
+addressed as follows.
+\begin{itemize}
+  \item \emph{Null-space dimensions in (7).} We agree. Since the dimension of
+  a null space equals the number of columns minus the rank, and the rank
+  cannot exceed the number of rows, (7) now states the lower bounds
+  $d_{\mathrm{phys}}\ge N_{\mathrm{tx}}[M_{\mathrm{tx}}-N_{\mathrm{UE}}M_{\mathrm{UE}}]^+$
+  and $d_{\mathrm{eff}}\ge[N_{\mathrm{tx}}M_{\mathrm{tx}}-N_{\mathrm{UE}}]^+$,
+  with equality when the stacked matrices have full row rank, which holds
+  with probability one for i.i.d. Rayleigh fading and generic combiners.
+  \item \emph{Independence versus identical variances.} We agree and have
+  revised the sentence to state that $\mathbf{E}_{i,k}$ is independent of
+  $\widehat{\mathcal{H}}$ and independent across links, and that its entries
+  are i.i.d.\ within each link with the link-dependent variance
+  $\widetilde{\beta}_{i,k}$.
+  \item \emph{Feasibility of the combiner update.} The constrained MMSE
+  update (15) requires the set $\{\mathbf{u}_i:\mathbf{Q}_i^H\mathbf{u}_i=\mathbf{0},
+  \|\mathbf{u}_i\|=1\}$ to be nonempty, i.e.,
+  $\operatorname{rank}(\mathbf{Q}_i)<M_{\mathrm{UE}}$, and the vector
+  $\widetilde{\mathbf{u}}_i$ to be nonzero. Since $\mathbf{R}_i^{-1}$ is
+  invertible, $\widetilde{\mathbf{u}}_i\neq\mathbf{0}$ holds if and only if
+  $\mathbf{q}_{i,i}\notin\operatorname{span}(\mathbf{Q}_i)$. As
+  $\mathbf{Q}_i$ has two columns, the first condition holds whenever
+  $M_{\mathrm{UE}}>2$, which includes the default $M_{\mathrm{UE}}=16$. Both
+  conditions are now stated explicitly after (16).
+\end{itemize}
+\end{response}
+\revisionlocation{Section~III-A, (7); Section~III-B, after (16);
+Section~III-C, first paragraph. [Add page and line numbers.]}
+\begin{revisedtext}
+\textit{Section III-A, (7):}
+\begin{equation*}
+d_{\mathrm{phys}}\ge N_{\mathrm{tx}}[M_{\mathrm{tx}}-N_{\mathrm{UE}}M_{\mathrm{UE}}]^+,\quad
+d_{\mathrm{eff}}\ge[N_{\mathrm{tx}}M_{\mathrm{tx}}-N_{\mathrm{UE}}]^+,
+\end{equation*}
+``with equality when the stacked channel matrices have full row rank,
+which holds with probability one under i.i.d. Rayleigh fading.''
+
+\textit{Section III-B, after (16):} ``The update is well defined when
+$\operatorname{rank}(\mathbf{Q}_i)<M_{\mathrm{UE}}$, which holds for
+$M_{\mathrm{UE}}>2$, and $\mathbf{q}_{i,i}\notin\operatorname{span}(\mathbf{Q}_i)$,
+which ensures $\widetilde{\mathbf{u}}_i\neq\mathbf{0}$.''
+
+\textit{Section III-C:} ``Under the LMMSE model, $\mathbf{E}_{i,k}$ is
+independent of $\widehat{\mathcal{H}}$ and independent across links, and its
+entries are i.i.d.\ $\mathcal{CN}(0,\widetilde{\beta}_{i,k})$ within each
+link, with the link-dependent variance $\widetilde\beta_{i,k}=\ldots$''
 \end{revisedtext}
 
 \reviewer{Reviewer 3}
@@ -1094,7 +1200,7 @@ We thank the reviewer for these careful observations, which we have addressed
 as follows.
 \begin{itemize}
   \item \emph{RCS.} The target RCS used in the simulations,
-  $\sigma_{\mathrm{RCS}}=[\text{value}]$~m$^2$, is now listed in Table~I,
+  $\sigma_{\mathrm{RCS}}=10$~m$^2$ ($10$~dBsm), is now listed in Table~I,
   and Section~II states that $\xi_{r,k}^2$ absorbs the RCS and the receive
   array gain.
   \item \emph{SNR versus SINR.} We agree. Since the data symbols are known
@@ -1102,17 +1208,19 @@ as follows.
   contains no interference term and is an SNR. The revised manuscript uses
   the term ``sensing SNR'' consistently and states that the AN echo is
   separated and discarded.
-  \item \emph{RX-AP antenna number.} The number of receive-AP antennas,
-  $M_{\mathrm{rx}}=[\text{value}]$, is now defined in Section~II and listed
-  in Table~I.
+  \item \emph{RX-AP antenna number.} The number of receive-AP antennas is
+  now defined in Section~II and listed in Table~I. The simulations use
+  $M_{\mathrm{rx}}=1$, i.e., no receive array gain in $\xi_{r,k}^2$; with
+  $M_{\mathrm{rx}}$ antennas steered toward the target, all sensing SNRs
+  would increase by $10\log_{10}M_{\mathrm{rx}}$~dB, which does not change
+  the comparison between the designs.
 \end{itemize}
 \end{response}
 \revisionlocation{Section~II, sensing-model paragraph; Table~I. [Add page
 and line numbers.]}
 \begin{revisedtext}
 \textit{Table I (added rows):} ``Target RCS $\sigma_{\mathrm{RCS}}$:
-$[\text{value}]$~m$^2$; RX-AP antennas $M_{\mathrm{rx}}$:
-$[\text{value}]$.''
+$10$~m$^2$; RX-AP antennas $M_{\mathrm{rx}}$: $1$.''
 \end{revisedtext}
 
 % Optional references cited in this response letter:

@@ -171,10 +171,8 @@ rates represent the leakage under a conservative attack model.''
 [Insert the relevant revised passage, if applicable.]
 \end{revisedtext}
 
-% Duplicate reviewer sections and comment/response blocks as needed.
-\reviewer{Reviewer 2}
 \begin{reviewcomment}
-[Insert the reviewer's first comment verbatim.]
+[Insert the reviewer's third comment verbatim.]
 \end{reviewcomment}
 \begin{response}
 [Provide the response and describe any resulting changes.]
@@ -182,6 +180,132 @@ rates represent the leakage under a conservative attack model.''
 \revisionlocation{[Section, page, and line numbers, or not applicable.]}
 \begin{revisedtext}
 [Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+\begin{reviewcomment}
+The sensing SNR expression in (2) needs further clarification. The
+contributions from different APs are added without considering possible
+coherent terms. In addition, the AN waveform is assumed to be known at the
+legitimate sensing receivers, but its contribution is excluded from the
+sensing SNR.
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for this comment. We have revised the sensing model in
+Section~II to state the receiver processing and the assumptions behind (2)
+explicitly, and we address the two points below.
+
+\textbf{Coherent cross terms.} Since all transmit APs radiate common symbols,
+the echo received at receive AP $r$ is the superposition
+$\sum_k\alpha_{r,k}\sqrt{g_{r,k}}\,\mathbf{a}^H(\phi_k)\mathbf{W}_k\mathbf{s}[n]$,
+where $\mathbf{s}[n]$ collects the symbols and $\alpha_{r,k}$ is the complex
+bistatic echo coefficient with $\mathbb{E}\{|\alpha_{r,k}|^2\}=\xi_{r,k}^2$.
+Its instantaneous power therefore contains cross terms between transmit APs,
+whose values depend on the relative phases of $\{\alpha_{r,k}\}_k$. These
+phases are not known to the network, because the target position is known
+only coarsely relative to the carrier wavelength ($\lambda_c\approx15.8$~cm
+at $1.9$~GHz) and the target response varies with the aspect angle. We
+therefore model them as independent and uniformly distributed across
+transmit--receive AP pairs. Under this model, the cross terms vanish in
+expectation, and (2) is the per-snapshot sensing SNR averaged over the echo
+phases, which is why it is referred to as the \emph{average} sensing SNR.
+The revised manuscript now states this assumption explicitly. A design that
+exploits coherent superposition at the target would require phase-accurate
+knowledge of the target position and phase synchronization of the transmit
+APs at the target, which we do not assume for the sensing function.
+
+\textbf{AN contribution.} The reviewer is correct that the AN echo was
+excluded from (2) without explanation. Since $s_z[n]$ is known at the receive
+APs and independent of the data and sensing symbols, its echo is separated by
+matched filtering and could in principle be exploited. We keep it out of the
+design objective deliberately. The AN echo from the true target is
+proportional to $T_k=|\mathbf{a}^H(\phi_k)\mathbf{z}_k|^2$, so including it
+in the objective would reward AN power in the true direction. This would
+raise the true-direction peak of the beampattern reconstructed by the
+adversary and work against the fake-peak constraint. Exploiting the AN echo
+at the receivers after the design would add $\sum_kc_kT_k\ge0$ to
+$\gamma_t$. Hence, the reported $\gamma_t$ is a lower bound on the achievable
+sensing SNR, and the reported $3.6$~dB loss is an upper bound on the sensing
+cost of the proposed design. Both points are now stated in Sections~II
+and~III.
+\end{response}
+\revisionlocation{Section~II, sensing-model paragraph; Section~III-B,
+paragraph following (10). [Add page and line numbers.]}
+\begin{revisedtext}
+\textit{Section II:} ``Each receive AP employs $M_{\mathrm{rx}}$ antennas,
+steers its receive beam toward the target, and matched-filters its received
+samples with the known transmitted symbols, where the data symbols, being
+available at the central processor, act as additional probing signals. The
+bistatic echo phases are not known to the network to within the carrier
+wavelength and vary with the aspect angle, and are therefore modeled as
+independent and uniformly distributed across transmit--receive AP pairs.
+Averaging over these phases removes the cross terms between the echoes of
+different transmit APs. With
+$\mathbf{W}_k\triangleq[\mathbf{w}_{1,k},\ldots,\mathbf{w}_{N_{\mathrm{UE}},k},\mathbf{w}_{t,k}]$,
+the per-snapshot sensing SNR, averaged over the echo phases and the
+$N_{\mathrm{rx}}$ receive APs, is [(2), unchanged].''
+
+\textit{Section III-B:} ``Since $s_z[n]$ is known at the receive APs and
+independent of the other symbols, matched filtering separates its echo. This
+echo is excluded from (2) and from the design objective, so that the
+objective does not reward AN power in the true direction, which would raise
+$T_k$. Exploiting it at the receivers would add $\sum_kc_kT_k\ge0$, so
+$\gamma_t$ is a lower bound on the achievable sensing SNR.''
+\end{revisedtext}
+
+% Duplicate reviewer sections and comment/response blocks as needed.
+\reviewer{Reviewer 2}
+\begin{reviewcomment}
+There is a potential inconsistency in the sensing-cost model. Equation (2)
+defines the sensing SNR using only the communication/sensing beam matrix
+$\mathbf {W_k} $ and excludes the AN beam $\mathbf {z_k} $, while the
+manuscript later states that $s_z[n]$ is known at the sensing receivers and
+that its echo can be separated from $s_t[n]$ by ideal matched filtering. If
+$s_z[n]$ is known, its target echo is itself a known probing signal and can,
+in principle, contribute additional sensing information; if it is
+deliberately discarded, the reported $3.6$ dB sensing-SNR loss is specific to
+that receiver definition. Can the sensing signal model explicitly state
+whether the AN echo is exploited, discarded, or treated as interference?
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for pointing out this inconsistency. The reviewer is
+correct that the known AN echo is itself a probing signal, and that the
+original manuscript did not state how it is handled. The revised sensing
+model now states explicitly that the AN echo is \emph{separated and
+discarded}: since $s_z[n]$ is known at the receive APs and independent of the
+data and sensing symbols, matched filtering separates its echo, and it is
+neither exploited in (2) nor treated as interference. The residual
+cross-correlation between independent unit-power symbols after matched
+filtering decays as $1/N$ in power and is neglected for $N=128$.
+
+We discard the AN echo in the design deliberately, rather than for
+convenience. The AN echo from the true target is proportional to
+$T_k=|\mathbf{a}^H(\phi_k)\mathbf{z}_k|^2$. Including it in the objective
+would therefore reward AN power in the true direction, which raises the
+true-direction peak of the beampattern reconstructed by the adversary and
+works against the fake-peak constraint (9g).
+
+We also agree that the $3.6$~dB loss is specific to this receiver
+definition, and we have qualified it accordingly. If the receivers
+additionally exploit the AN echo, the sensing SNR becomes
+$\gamma_t+\sum_kc_kT_k\ge\gamma_t$. The reported $\gamma_t$ is therefore a
+lower bound on the achievable sensing SNR, and the reported $3.6$~dB loss is
+an upper bound on the sensing cost of the proposed design. In addition, our
+response to Reviewer~3, Comment~2, translates this loss into detection and
+false-alarm probabilities.
+\end{response}
+\revisionlocation{Section~II, sensing-model paragraph; Section~III-B,
+paragraph following (10); Section~IV-B, discussion of Fig.~3. [Add page and
+line numbers.]}
+\begin{revisedtext}
+\textit{Section III-B:} ``Since $s_z[n]$ is known at the receive APs and
+independent of the other symbols, matched filtering separates its echo. This
+echo is excluded from (2) and from the design objective, so that the
+objective does not reward AN power in the true direction, which would raise
+$T_k$. Exploiting it at the receivers would add $\sum_kc_kT_k\ge0$, so
+$\gamma_t$ is a lower bound on the achievable sensing SNR.''
+
+\textit{Section IV-B:} ``Since the AN echo is discarded in (2), this loss is
+an upper bound on the sensing cost of the proposed design.''
 \end{revisedtext}
 
 \begin{reviewcomment}
@@ -285,6 +409,202 @@ identifiable when $\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$ has full
 column rank, i.e., with probability one for $M_{\mathrm{UE}}\ge
 M_{\mathrm{tx}}$, and forms the AP-dependent beampattern from the sample
 covariance over the available snapshots.''
+\end{revisedtext}
+
+\reviewer{Reviewer 3}
+\begin{reviewcomment}
+Most of all, the legitimate sensing operation is not clearly described. For
+example, although multiple RX APs are considered, the operation at each RX AP
+(e.g., receive beamforming) and the combining between APs
+(coherent/non-coherent, central/distributed) are not described. It is
+difficult to grasp how the sensing SINR in Eq.2 is obtained. Also, it is not
+clear who experiences the sensing SINR. Is it an individual RX AP, or the
+system as a whole?
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for this comment and agree that the legitimate sensing
+operation was not described in sufficient detail. The revised Section~II now
+describes the processing chain as follows.
+\begin{enumerate}
+  \item \emph{Operation at each RX AP.} Each receive AP employs
+  $M_{\mathrm{rx}}$ antennas and steers its receive beam toward the target.
+  The resulting receive array gain is absorbed, together with the target
+  RCS, in the scattering power $\xi_{r,k}^2$. Each receive AP then
+  matched-filters its received samples with the known transmitted symbols.
+  The data symbols are available at the central processor and therefore act
+  as additional probing signals, while the echo of the known AN symbol is
+  separated by matched filtering and discarded.
+  \item \emph{Combining between RX APs.} The receive APs forward their
+  matched-filter outputs to the central processor, which fuses them
+  non-coherently. Non-coherent fusion avoids phase synchronization among the
+  receive APs.
+  \item \emph{How (2) is obtained.} At receive AP $r$, the echo is the
+  superposition
+  \begin{equation*}
+  \sum_{k=1}^{N_{\mathrm{tx}}}\alpha_{r,k}\sqrt{g_{r,k}}\,\mathbf{a}^H(\phi_k)\mathbf{W}_k\mathbf{s}[n],
+  \end{equation*}
+  where $\mathbf{s}[n]$ collects the unit-power symbols and $\alpha_{r,k}$ is
+  the bistatic echo coefficient with $\mathbb{E}\{|\alpha_{r,k}|^2\}=\xi_{r,k}^2$.
+  Since the echo phases are not known to within the carrier wavelength, they
+  are modeled as independent and uniformly distributed across
+  transmit--receive AP pairs. Averaging over these phases and the symbols
+  gives the per-snapshot SNR at receive AP $r$,
+  \begin{equation*}
+  \gamma_r=\frac{1}{\sigma_{\mathrm{rx}}^2}\sum_{k=1}^{N_{\mathrm{tx}}}\xi_{r,k}^2g_{r,k}\left\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\right\|_F^2,
+  \end{equation*}
+  and (2) is its average $\gamma_t=\frac{1}{N_{\mathrm{rx}}}\sum_r\gamma_r$.
+  \item \emph{Who experiences the SNR.} $\gamma_t$ is the average
+  per-receive-AP SNR. The SNR of the fused statistic at the central
+  processor is $N_{\mathrm{rx}}\gamma_t$. Since the two differ by a constant
+  factor, they are maximized by the same beams, and the design is unaffected
+  by this choice. All reported sensing SNRs are average per-receive-AP
+  values, which is now stated in Section~IV.
+\end{enumerate}
+The detector applied to the fused statistic is described in our response to
+Comment~2.
+\end{response}
+\revisionlocation{Section~II, sensing-model paragraph; Section~IV-A,
+simulation setup. [Add page and line numbers.]}
+\begin{revisedtext}
+\textit{Section II:} ``Each receive AP employs $M_{\mathrm{rx}}$ antennas,
+steers its receive beam toward the target, and matched-filters its received
+samples with the known transmitted symbols, where the data symbols, being
+available at the central processor, act as additional probing signals. The
+bistatic echo phases are not known to the network to within the carrier
+wavelength and vary with the aspect angle, and are therefore modeled as
+independent and uniformly distributed across transmit--receive AP pairs.
+Averaging over these phases removes the cross terms between the echoes of
+different transmit APs. With
+$\mathbf{W}_k\triangleq[\mathbf{w}_{1,k},\ldots,\mathbf{w}_{N_{\mathrm{UE}},k},\mathbf{w}_{t,k}]$,
+the per-snapshot sensing SNR, averaged over the echo phases and the
+$N_{\mathrm{rx}}$ receive APs, is [(2), unchanged], where \ldots,
+$\xi_{r,k}^2$ is the scattering power absorbing the target radar cross
+section (RCS) and the receive array gain, and $\sigma_{\mathrm{rx}}^2$ is the
+receive noise power. The receive APs forward their matched-filter outputs to
+the central processor, which fuses them non-coherently, so the fused SNR
+$N_{\mathrm{rx}}\gamma_t$ is maximized by the same beams as $\gamma_t$.''
+\end{revisedtext}
+
+\begin{reviewcomment}
+Furthermore, the authors have not described any detector or detection
+threshold. Therefore, ``x dB sensing SINR loss'' doesn't represent anything.
+How is it translated into the detection and false-alarm probabilities,
+which eventually matter? Without this, it is very difficult to judge whether
+the proposed scheme is practically useful.
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for this important comment and agree that the SNR loss
+should be related to detection performance. The revised manuscript now
+specifies the detector and reports the corresponding detection
+probabilities.
+
+\textbf{Detector.} With unknown echo amplitudes and phases at the receive
+APs, the generalized likelihood ratio test sums the matched-filter output
+energies of the $N_{\mathrm{rx}}$ receive APs and compares the sum with a
+threshold $\tau$. After normalization, the statistic follows a central
+$\chi^2$ distribution with $2N_{\mathrm{rx}}$ degrees of freedom under the
+null hypothesis, so $\tau$ is set by $\Pr\{\chi^2_{2N_{\mathrm{rx}}}>\tau\}=P_{\mathrm{fa}}$.
+Under the target hypothesis, it follows a noncentral $\chi^2$ distribution
+with noncentrality $2N\sum_r\gamma_r$, which gives
+\begin{equation*}
+P_{\mathrm{d}}=\mathbb{E}\Big\{Q_{N_{\mathrm{rx}}}\Big(\sqrt{2N{\textstyle\sum_r}\gamma_r},\sqrt{\tau}\Big)\Big\},
+\end{equation*}
+where $Q_{N_{\mathrm{rx}}}(\cdot,\cdot)$ is the generalized Marcum
+$Q$-function. Consistent with the random echo phases of the sensing model,
+the per-receive-AP SNRs $\gamma_r$ are taken as independent and exponentially
+distributed with mean $\gamma_t$, and the expectation is over this
+fluctuation.
+
+\textbf{Detection performance.} For $P_{\mathrm{fa}}=10^{-6}$ and
+$N_{\mathrm{rx}}=4$, a single snapshot yields $P_{\mathrm{d}}=0.994$ for the
+no-AN reference ($\gamma_t=14.7$~dB) and $P_{\mathrm{d}}=0.929$ for the
+proposed design at $\eta\approx0.50$ ($\gamma_t=11.1$~dB). With integration
+over the $N=128$ snapshots, both designs achieve $P_{\mathrm{d}}>0.999$,
+since $P_{\mathrm{d}}=0.9$ then requires only $\gamma_t\ge-10.6$~dB.
+The $3.6$~dB loss therefore reduces the detection margin rather than the
+detection probability in the default setting.
+
+\textbf{Practical interpretation.} Since the two-way path gain $g_{r,k}$
+scales with the fourth power of distance, a $3.6$~dB loss corresponds to an
+approximately $19\%$ reduction of the bistatic distances that can be
+supported at fixed $(P_{\mathrm{d}},P_{\mathrm{fa}})$. Moreover, as stated in
+our response to Reviewer~2, Comment~1, the reported loss is an upper bound,
+since the known AN echo is discarded. Given the length limit of a
+correspondence, we report these values in the text of Section~IV-B rather
+than in an additional figure.
+\end{response}
+\revisionlocation{Section~IV-B, discussion of Fig.~3. [Add page and line
+numbers.]}
+\begin{revisedtext}
+\textit{Section IV-B:} ``To relate these values to detection performance, we
+consider the generalized likelihood ratio test at the central processor,
+which sums the matched-filter output energies of the $N_{\mathrm{rx}}$
+receive APs, with the threshold set for $P_{\mathrm{fa}}=10^{-6}$. With
+per-receive-AP SNRs exponentially distributed around $\gamma_t$ due to the
+random echo phases, a single snapshot yields $P_{\mathrm{d}}=0.994$ for the
+no-AN reference and $0.929$ for the proposed design at $\eta\approx0.50$,
+while integration over the $N=128$ snapshots yields $P_{\mathrm{d}}>0.999$
+for both, since $P_{\mathrm{d}}=0.9$ then requires only $\gamma_t\ge-10.6$~dB.
+The $3.6$~dB loss thus reduces the detection margin rather than the
+detection probability, and corresponds to an approximately $19\%$ reduction
+of the supported bistatic distances at fixed
+$(P_{\mathrm{d}},P_{\mathrm{fa}})$.''
+\end{revisedtext}
+
+\begin{reviewcomment}
+[Insert the reviewer's third comment verbatim.]
+\end{reviewcomment}
+\begin{response}
+[Provide the response and describe any resulting changes.]
+\end{response}
+\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\begin{revisedtext}
+[Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+\begin{reviewcomment}
+[Insert the reviewer's fourth comment verbatim.]
+\end{reviewcomment}
+\begin{response}
+[Provide the response and describe any resulting changes.]
+\end{response}
+\revisionlocation{[Section, page, and line numbers, or not applicable.]}
+\begin{revisedtext}
+[Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+\begin{reviewcomment}
+Minor comments.
+\begin{itemize}
+  \item RCS is not specified in the experiments.
+  \item Eq. 2 is not really an SINR. No interference there.
+  \item TheRX-AP antenna number is missing.
+\end{itemize}
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for these careful observations, which we have addressed
+as follows.
+\begin{itemize}
+  \item \emph{RCS.} The target RCS used in the simulations,
+  $\sigma_{\mathrm{RCS}}=[\text{value}]$~m$^2$, is now listed in Table~I,
+  and Section~II states that $\xi_{r,k}^2$ absorbs the RCS and the receive
+  array gain.
+  \item \emph{SNR versus SINR.} We agree. Since the data symbols are known
+  probing signals and the AN echo is separated by matched filtering, (2)
+  contains no interference term and is an SNR. The revised manuscript uses
+  the term ``sensing SNR'' consistently and states that the AN echo is
+  separated and discarded.
+  \item \emph{RX-AP antenna number.} The number of receive-AP antennas,
+  $M_{\mathrm{rx}}=[\text{value}]$, is now defined in Section~II and listed
+  in Table~I.
+\end{itemize}
+\end{response}
+\revisionlocation{Section~II, sensing-model paragraph; Table~I. [Add page
+and line numbers.]}
+\begin{revisedtext}
+\textit{Table I (added rows):} ``Target RCS $\sigma_{\mathrm{RCS}}$:
+$[\text{value}]$~m$^2$; RX-AP antennas $M_{\mathrm{rx}}$:
+$[\text{value}]$.''
 \end{revisedtext}
 
 % Optional references cited in this response letter:

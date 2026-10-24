@@ -117,7 +117,12 @@ Additions for the revision, beyond the published sweep:
   separated location hypotheses, and resolves them by votes, at random, or mechanism-aware
   (weaker peaks win); `mhv_*`, `mhr_*`, `mha_*` hold the three success indicators and `mhs_*`
   the two-guess success. `est_*` stores the dominant-peak estimates for the scatter plot and
-  `fhit_*` whether they land in the virtual location's cell.
+  `fhit_*` whether they land in the virtual location's cell. Each AP votes at most once per
+  cell, and cells next to a TX AP are not taken as hypotheses (`cfg.mh_ap_guard`); a second
+  hypothesis competes only with at least `cfg.mh_coherent` of the first one's votes. The fake
+  hypothesis is supported only by APs with resolvable directions, so with the default
+  `PosFake = (5, −25)` (5 of 8 resolvable) a vote-counting adversary recovers the target;
+  e.g. `cfg.PosFake = [175 35]` makes all 8 APs resolvable.
 - **Fake-peak cap** (Reviewer 2, Comment 5): `opts.fake_upper` (κ) in both solvers caps the
   fake-direction response at κ(ρ‖a^H W_k‖² + T_k), so ρ ≈ 1 gives power-matched true and fake
   peaks. Off by default (`cfg.fake_upper = Inf`); for the matched operating point, rerun with

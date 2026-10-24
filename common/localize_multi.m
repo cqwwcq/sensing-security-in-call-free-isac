@@ -7,14 +7,18 @@ function mh = localize_multi(cfg, geo, R)
 %   so a mirror image does not count as a second peak), casts one ray per
 %   peak, and takes as its two hypotheses the most-voted cell and the
 %   most-voted cell outside a cfg.mh_exclusion-cell neighborhood of it.  The
-%   two hypotheses are then resolved by three rules:
+%   second hypothesis is coherent if it collects at least cfg.mh_coherent
+%   times the votes of the first; otherwise there is no competing
+%   hypothesis and every rule keeps the first.  Each AP votes at most once
+%   per cell, and cells within cfg.mh_ap_guard cells of a transmit AP, where
+%   an AP's own rays meet, are not taken as hypotheses.  Rules:
 %
 %   mh.det_votes  more votes wins (ties at random)
-%   mh.det_rand   one of the two at random (a mechanism-unaware adversary
-%                 that knows one hypothesis may be artificial)
-%   mh.det_aware  the hypothesis whose supporting peaks are weaker wins (an
-%                 adversary that knows the fake peak is designed to be the
-%                 stronger one)
+%   mh.det_rand   one of two coherent hypotheses at random (an adversary
+%                 that suspects one of them is artificial)
+%   mh.det_aware  of two coherent hypotheses, the one whose supporting peaks
+%                 are weaker wins (an adversary that knows the fake peak is
+%                 designed to be the stronger one)
 %   mh.det_set    the target cell is one of the two hypotheses, i.e. the
 %                 success of an adversary allowed two guesses, which bounds
 %                 any rule that picks one of them
@@ -32,6 +36,7 @@ rays = struct('cells', {}, 'power', {});
 for k = 1:Ntx
     B = real(sum((conj(At) * R(:, :, k)) .* At, 2));
     pk = two_peaks(B, theta, Mtx);
+    ap_cells = [];
     for p = pk
         th = theta(p);
         cand = [th, angle(exp(1j*(pi - th)))];
@@ -49,19 +54,27 @@ for k = 1:Ntx
             pick = pick(randi(numel(pick)));
         end
         for c = pick
-            votes(cells{c}) = votes(cells{c}) + 1;
+            ap_cells = [ap_cells; cells{c}]; %#ok<AGROW>
             rays(end+1) = struct('cells', cells{c}, 'power', B(p)); %#ok<AGROW>
         end
     end
+    ap_cells = unique(ap_cells);
+    votes(ap_cells) = votes(ap_cells) + 1;
 end
 
 % Two hypotheses: the most-voted cell, and the most-voted cell outside its
 % neighborhood.
-h1 = argmax_random(votes(:));
-[i1, j1] = ind2sub([nx, ny], h1);
 [I, J] = ndgrid(1:nx, 1:ny);
+v1 = votes;
+for k = 1:Ntx
+    ia = floor((cfg.PosTx(k, 1) - A(1)) / cs) + 1;
+    ja = floor((cfg.PosTx(k, 2) - A(3)) / cs) + 1;
+    v1(max(abs(I - ia), abs(J - ja)) <= cfg.mh_ap_guard) = -inf;
+end
+h1 = argmax_random(v1(:));
+[i1, j1] = ind2sub([nx, ny], h1);
 far = max(abs(I - i1), abs(J - j1)) > cfg.mh_exclusion;
-v2 = votes;
+v2 = v1;
 v2(~far) = -inf;
 h2 = argmax_random(v2(:));
 hyp = [h1, h2];
@@ -82,14 +95,20 @@ if votes(h1) > votes(h2)
 else
     pick_votes = hyp(randi(2));
 end
-if score(1) ~= score(2)
-    [~, w] = min(score);
-    pick_aware = hyp(w);
-else
-    pick_aware = hyp(randi(2));
+coherent = votes(h2) >= cfg.mh_coherent * votes(h1);
+pick_rand = h1;
+pick_aware = h1;
+if coherent
+    pick_rand = hyp(randi(2));
+    if score(1) ~= score(2)
+        [~, w] = min(score);
+        pick_aware = hyp(w);
+    else
+        pick_aware = hyp(randi(2));
+    end
 end
 mh.det_votes = pick_votes == target;
-mh.det_rand = hyp(randi(2)) == target;
+mh.det_rand = pick_rand == target;
 mh.det_aware = pick_aware == target;
 mh.det_set = any(hyp == target);
 end

@@ -644,8 +644,15 @@ fake-direction components as rank-one terms driven by unknown streams with
 identical statistics. By construction, the fake directions of the APs in
 $\mathcal{K}_{\mathrm{res}}$ are geometrically consistent with the common
 virtual location $\mathbf{p}_{\mathrm{f}}$, just as the true directions are
-consistent with $\mathbf{p}_t$. The two hypotheses therefore differ only in
-their peak powers, which are set by $\rho$ in (9g). If the two powers are
+consistent with $\mathbf{p}_t$. This symmetry, however, also requires the
+fake hypothesis to be supported by the same APs as the true one. An AP whose
+true and fake directions are unresolvable supports only the true
+hypothesis, so that a vote-counting adversary favors the target unless
+$\mathcal{K}_{\mathrm{res}}$ contains all transmit APs. In the revised
+simulations, we therefore choose $\mathbf{p}_{\mathrm{f}}=[X]$, for which
+all eight transmit APs satisfy the resolvability condition of our response
+to Reviewer~1, Comment~2. With full support, the two hypotheses differ only
+in their peak powers, which are set by $\rho$ in (9g). If the two powers are
 matched, the peak powers carry no information on which hypothesis is
 artificial, and an adversary that relies on the reconstructed beampatterns
 faces two hypotheses that are, up to sidelobe details, symmetric. It can
@@ -701,8 +708,10 @@ extension.
 remark after (10); Section~IV-B; Section~V. [Add page and line numbers.]}
 \begin{revisedtext}
 \textit{Section III-B, remark after (10):} ``Since $s_t[n]$ and $s_z[n]$
-are both unknown to the adversary and statistically identical, the true and
-fake hypotheses differ only in their peak powers. With $\rho\approx1$ and
+are both unknown to the adversary and statistically identical, and since
+$\mathbf{p}_{\mathrm{f}}$ is chosen such that $\mathcal{K}_{\mathrm{res}}$
+contains all transmit APs, the true and fake hypotheses are supported by the
+same APs and differ only in their peak powers. With $\rho\approx1$ and
 the fake-direction response capped as
 $F_k\le\kappa(\rho\|\mathbf{a}^H(\phi_k)\mathbf{W}_k\|_F^2+T_k)$, the two
 powers are matched, and a beampattern-based adversary can then identify the

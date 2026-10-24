@@ -51,6 +51,9 @@ cfg.area = [-200 200 -200 200];  % search area [xmin xmax ymin ymax] [ASSUMED]
 cfg.mirror_rule = 'random';   % ULA front-back ambiguity: 'random' or 'both'
 cfg.mh_exclusion = 3;         % multi-hypothesis attack: second hypothesis lies
                               % more than this many cells from the first
+cfg.mh_coherent = 0.6;        % ... and competes only with at least this
+                              % fraction of the first hypothesis' votes
+cfg.mh_ap_guard = 2;          % no hypotheses within this many cells of a TX AP
 
 % --- Design sweep ---
 cfg.rho_list = [0.05 0.15 0.3 0.5 0.75 1.05 1.5 2.2 3.5];

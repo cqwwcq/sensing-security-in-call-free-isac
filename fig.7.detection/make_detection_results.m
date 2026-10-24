@@ -10,6 +10,10 @@ function make_detection_results(sweep_file, out_file)
 %     fdom_prop_mean  fraction of APs with a dominant reconstructed fake peak
 %     pkf_/pkt_*_mean fraction of APs whose dominant reconstructed peak lies
 %                  at the fake / true direction
+%     p_mh{v,r,a,s}_*  success of the multi-hypothesis attack with the votes /
+%                  random / mechanism-aware rule and with two guesses
+%     p_fhit_*     fraction of dominant-peak estimates in the virtual
+%                  location's cell
 %     pd_*_mean    mean detection probability, see DETECTION_PD
 
 here = fileparts(mfilename('fullpath'));
@@ -43,6 +47,11 @@ O.fdom_prop_mean = mean(S.fdom_prop, 2).';
 O.pkf_prop_mean = mean(S.pkf_prop, 2).';
 O.pkt_prop_mean = mean(S.pkt_prop, 2).';
 O.pkt_noan_mean = mean(S.pkt_noan);
+for r = {'mhv', 'mhr', 'mha', 'mhs', 'fhit'}
+    O.(['p_' r{1} '_noan']) = mean(S.([r{1} '_noan']));
+    O.(['p_' r{1} '_null']) = mean(S.([r{1} '_null']), 2).';
+    O.(['p_' r{1} '_prop']) = mean(S.([r{1} '_prop']), 2).';
+end
 O.pd_noan_mean = mean(S.pd_noan, 3);                 % nOffset x nN
 O.pd_null_mean = mean(S.pd_null, 4);                 % nRho x nOffset x nN
 O.pd_prop_mean = mean(S.pd_prop, 4);
@@ -67,6 +76,17 @@ fprintf('  proposed : success %.2f %%, SNR %.2f dB, SNR with AN echo %.2f dB, fa
 fprintf('  proposed : dominant peak at fake / true / elsewhere: %.0f / %.0f / %.0f %% of APs (no AN: %.0f %% at true)\n', ...
     100*O.pkf_prop_mean(j), 100*O.pkt_prop_mean(j), ...
     100*(1 - O.pkf_prop_mean(j) - O.pkt_prop_mean(j)), 100*O.pkt_noan_mean);
+fprintf('  estimates in the virtual location''s cell: no AN %.1f %%, proposed %.1f %%\n', ...
+    100*O.p_fhit_noan, 100*O.p_fhit_prop(j));
+fprintf('  multi-hypothesis attack, success with votes / random / aware rule / two guesses:\n');
+fprintf('    no AN   : %5.1f / %5.1f / %5.1f / %5.1f %%\n', 100*O.p_mhv_noan, ...
+    100*O.p_mhr_noan, 100*O.p_mha_noan, 100*O.p_mhs_noan);
+[~, j1] = min(abs(cfg.rho_list - 1));
+for jj = unique([j, j1])
+    fprintf('    proposed (rho = %.2f, eta = %.3f): %5.1f / %5.1f / %5.1f / %5.1f %%\n', ...
+        cfg.rho_list(jj), O.eta(jj), 100*O.p_mhv_prop(jj), 100*O.p_mhr_prop(jj), ...
+        100*O.p_mha_prop(jj), 100*O.p_mhs_prop(jj));
+end
 fprintf('  null-only: success %.2f %%, SNR %.2f dB (its own eta %.3f)\n', ...
     100*O.p_null(j), O.snr_null_mean(j), O.eta_null(j));
 if has_zou

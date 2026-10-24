@@ -22,6 +22,10 @@ function [gamma_t_opt, w_i_opt, w_t_opt,u_opt,z_opt, solve_time, success,power_z
     % APs whose true and fake directions are resolvable avoids spending
     % sensing power where no distinguishable fake peak can be formed.
     FAKE_MASK = true(1, Ntx);
+    % Optional cap on the fake-direction response, F_k <= kappa * (rho *
+    % ||a^H W_k||^2 + T_k), so that with rho ~ 1 the fake and true peaks
+    % have matched power (Reviewer 2, Comment 5).  Inf disables it.
+    FAKE_UPPER = Inf;
     % an_mode selects the design being solved:
     %   'fake' : proposed design, prob:null + prob:null-t + prob:fake
     %   'none' : no-AN baseline, sensing objective under QoS and power only
@@ -42,6 +46,9 @@ function [gamma_t_opt, w_i_opt, w_t_opt,u_opt,z_opt, solve_time, success,power_z
         end
         if isfield(opts, 'fake_mask')
             FAKE_MASK = logical(opts.fake_mask);
+        end
+        if isfield(opts, 'fake_upper')
+            FAKE_UPPER = opts.fake_upper;
         end
         if isfield(opts, 'an_mode')
             AN_MODE = opts.an_mode;
@@ -335,6 +342,17 @@ function [gamma_t_opt, w_i_opt, w_t_opt,u_opt,z_opt, solve_time, success,power_z
                             rou*f+t_leak-grad_fake_term+const_fake_term<=0;
                         else
                             rou*f-grad_fake_term+const_fake_term<=0;
+                        end
+                        if isfinite(FAKE_UPPER)
+                            % Affine lower bounds of ||a^H W_k||^2 and T_k at
+                            % the current iterate keep the cap convex and
+                            % conservative.
+                            aW_r = a_phi_k_H_list{k} * [squeeze(w_i_r(:,:,k)), w_t_r(:,k)];
+                            aW_lb = 2*real(aW_r * (a_phi_k_H_list{k} * W_ISAC_k_var)') - norm(aW_r)^2;
+                            az_r = a_phi_k_H_list{k} * z_r(:,k);
+                            az_lb = FAKE_TLEAK * (2*real(conj(az_r) * (a_phi_k_H_list{k} * z_vars(:,k))) - abs(az_r)^2);
+                            pow_pos(abs(a_phi_k_H_list_fake{k} * z_vars(:,k)), 2) <= ...
+                                FAKE_UPPER * (rou*aW_lb + az_lb);
                         end
                     end
                     if ~USE_AN

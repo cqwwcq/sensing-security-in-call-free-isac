@@ -84,13 +84,16 @@ Run from MATLAB, in this order:
 | 2 | `fig.7.detection/make_detection_results.m` | `detection_results.mat`, printout of the quoted values |
 | 3 | `fig.7.detection/plot_localization_success.m` | `figure/localization_success_tvt.pdf` (Fig. 2) |
 | 4 | `fig.7.detection/plot_sensing_snr.m` | `figure/sensing_snr_final.pdf` (Fig. 3) |
-| 5 | `fig.7.detection/plot_detection_pd.m` | `fig.7.detection/detection_pd_response.pdf` (response letter) |
+| 5 | `fig.7.detection/plot_detection_pd.m` | `fig.7.detection/detection_pd_response.pdf` (response letter, R3-2) |
+| 5b | `fig.7.detection/plot_multi_hypothesis.m` | `fig.7.detection/multi_hypothesis_response.pdf` (response letter, R2-5) |
+| 5c | `fig.7.detection/plot_location_scatter.m` | `fig.7.detection/location_scatter_response.pdf` (response letter Fig. R1, R1-3) |
 | 6 | `fig.9.outage/run_outage_sweep.m` | `outage_results.mat` |
 | 7 | `fig.9.outage/plot_outage.m` | `figure/outage_vs_nmse.pdf` (Fig. 4), printout |
 
 Shared helpers are in `common/`: `sim_config.m` (all parameters), `setup_geometry.m`,
 `gen_channels.m` (LMMSE pilots or fixed NMSE), `localize_target.m` (dominant-peak line
-fusion with cell voting), `draw_nullonly_an.m`, `sensing_metrics.m`, `detection_pd.m`,
+fusion with cell voting), `localize_multi.m` (multi-hypothesis attack), `ray_cells.m`,
+`draw_nullonly_an.m`, `sensing_metrics.m`, `detection_pd.m`,
 `wilson_ci.m`, `paper_fig_style.m`, and copies of `beamsteering.m` / `compute_angle_dist.m`.
 
 Additions for the revision, beyond the published sweep:
@@ -109,6 +112,16 @@ Additions for the revision, beyond the published sweep:
   reconstructed fake-direction response exceeds the true-direction response, and `pkf_*` /
   `pkt_*`, the fraction whose reconstructed dominant peak lies at the fake / true direction,
   all over the APs with resolvable directions.
+- **Multi-hypothesis adversary** (Reviewer 2, Comment 5; Reviewer 1, Comment 3):
+  `localize_multi.m` keeps the two strongest distinct peaks per AP, forms the two most-voted,
+  separated location hypotheses, and resolves them by votes, at random, or mechanism-aware
+  (weaker peaks win); `mhv_*`, `mhr_*`, `mha_*` hold the three success indicators and `mhs_*`
+  the two-guess success. `est_*` stores the dominant-peak estimates for the scatter plot and
+  `fhit_*` whether they land in the virtual location's cell.
+- **Fake-peak cap** (Reviewer 2, Comment 5): `opts.fake_upper` (κ) in both solvers caps the
+  fake-direction response at κ(ρ‖a^H W_k‖² + T_k), so ρ ≈ 1 gives power-matched true and fake
+  peaks. Off by default (`cfg.fake_upper = Inf`); for the matched operating point, rerun with
+  e.g. `cfg.fake_upper = 1.2` and `cfg.rho_list` around 1.
 - **Detection probability** (Reviewer 3, Comment 2): `pd_*`, GLRT over the Nue+1 known
   streams with Swerling-I echo draws on the designed beams, for N ∈ {5, 128} and RCS
   offsets −30…0 dB. `plot_detection_pd.m` overlays the closed-form model quoted in the

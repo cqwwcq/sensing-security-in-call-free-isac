@@ -76,22 +76,3 @@ ty = min(floor((cfg.PosTarget(2) - A(3)) / cs) + 1, ny);
 success = (ix == tx) && (iy == ty);
 err = norm(est - cfg.PosTarget);
 end
-
-function idx = ray_cells(p0, th, A, cs, nx, ny)
-% Linear indices of the cells crossed by the ray from p0 at angle th.
-L = hypot(A(2) - A(1), A(4) - A(3));
-t = (0:cs/20:L).';
-P = p0 + t * [cos(th), sin(th)];
-tol = 1e-9;
-in = P(:, 1) >= A(1) - tol & P(:, 1) <= A(2) + tol & ...
-     P(:, 2) >= A(3) - tol & P(:, 2) <= A(4) + tol;
-P = P(in, :);
-% A ray from a boundary AP that points outward leaves only the AP itself.
-if size(P, 1) < 2
-    idx = [];
-    return;
-end
-ix = min(max(floor((P(:, 1) - A(1)) / cs) + 1, 1), nx);
-iy = min(max(floor((P(:, 2) - A(3)) / cs) + 1, 1), ny);
-idx = unique(sub2ind([nx, ny], ix, iy));
-end

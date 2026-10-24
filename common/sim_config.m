@@ -49,6 +49,8 @@ cfg.cell_size = 10;           % m [Table I]
 cfg.n_ang = 3604;             % angle-scan points over [-pi, pi)
 cfg.area = [-200 200 -200 200];  % search area [xmin xmax ymin ymax] [ASSUMED]
 cfg.mirror_rule = 'random';   % ULA front-back ambiguity: 'random' or 'both'
+cfg.mh_exclusion = 3;         % multi-hypothesis attack: second hypothesis lies
+                              % more than this many cells from the first
 
 % --- Design sweep ---
 cfg.rho_list = [0.05 0.15 0.3 0.5 0.75 1.05 1.5 2.2 3.5];
@@ -58,6 +60,8 @@ cfg.fake_tleak = true;        % revised (9g) with T_k on the right-hand side
                               % (Reviewer 1, Comment 2); published: false
 cfg.fake_resolvable_only = true;  % impose (9g) only at APs with resolvable
                               % true and fake directions; published: false
+cfg.fake_upper = Inf;          % cap kappa on the fake peak; e.g. 1.2 with
+                              % rho ~ 1 gives power-matched peaks
 cfg.solver_opts = struct('max_iter', 30, 'tol', 4e-3);
 
 % --- Detection probability (Reviewer 3, Comment 2) ---

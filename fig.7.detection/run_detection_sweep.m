@@ -17,6 +17,13 @@ function run_detection_sweep(out_file)
 %     pkf_*, pkt_*  fraction of APs whose reconstructed dominant peak lies at
 %                the fake / true direction (the rest lie elsewhere); fdom_*,
 %                pkf_* and pkt_* count only APs with resolvable directions
+%     mhv_*, mhr_*, mha_*, mhs_*  success of the multi-hypothesis attack
+%                with the votes / random / mechanism-aware rule, and with
+%                two guesses (Reviewer 2, Comment 5), see LOCALIZE_MULTI
+%     fhit_*     the dominant-peak estimate lies in the virtual location's cell
+%     est_*      estimated location of the dominant-peak attack, 2 x runs
+%                (or nRho x 2 x runs), for the scatter plot of Reviewer 1,
+%                Comment 3
 %     pd_*       detection probability, nOffset x nN x runs (or nRho x
 %                nOffset x nN x runs), see DETECTION_PD
 %
@@ -81,11 +88,13 @@ end
 function S = collect(S, res, name)
 % Stack the per-run results of one design along the last dimension.
 x = [res.(name)];
-fields = {'det', 'err', 'eta', 'snr', 'snrz', 'fdom', 'pkf', 'pkt'};
+fields = {'det', 'err', 'eta', 'snr', 'snrz', 'fdom', 'pkf', 'pkt', ...
+    'mhv', 'mhr', 'mha', 'mhs', 'fhit'};
 for f = fields
     S.([f{1} '_' name]) = cat(2, x.(f{1}));
 end
 S.(['pd_' name]) = cat(ndims(x(1).pd) + 1, x.pd);
+S.(['est_' name]) = cat(3, x.est);
 if strcmp(name, 'noan')
     S = rmfield(S, {'eta_noan', 'snrz_noan', 'fdom_noan'});
 end
@@ -117,6 +126,7 @@ out.noan = evaluate(w_i, w_t, zeros(size(z)));
 
 blank = struct('det', nan, 'err', nan, 'eta', nan, 'snr', nan, 'snrz', nan, ...
     'fdom', nan, 'pkf', nan, 'pkt', nan, ...
+    'mhv', nan, 'mhr', nan, 'mha', nan, 'mhs', nan, 'fhit', nan, 'est', nan(1, 2), ...
     'pd', nan(numel(cfg.pd_offset_dB), numel(cfg.pd_N_list)));
 prop = repmat(blank, nr, 1); null = prop; zou = prop;
 
@@ -125,7 +135,8 @@ for j = 1:nr
 
     % --- Proposed fake-peak design ---
     opts = struct('an_mode', 'fake', 'sym_null', cfg.sym_null_prop, ...
-        'fake_tleak', cfg.fake_tleak, 'fake_mask', fake_mask(cfg, geo));
+        'fake_tleak', cfg.fake_tleak, 'fake_mask', fake_mask(cfg, geo), ...
+        'fake_upper', cfg.fake_upper);
     [w_i, w_t, ~, z, okd] = solve(cfg.P_T, rho, opts);
     out.ok = out.ok && okd;
     prop(j) = evaluate(w_i, w_t, z);
@@ -170,6 +181,12 @@ s.snrz = [x.snrz].';
 s.fdom = [x.fdom].';
 s.pkf = [x.pkf].';
 s.pkt = [x.pkt].';
+s.mhv = [x.mhv].';
+s.mhr = [x.mhr].';
+s.mha = [x.mha].';
+s.mhs = [x.mhs].';
+s.fhit = [x.fhit].';
+s.est = cat(1, x.est);
 s.pd = permute(cat(3, x.pd), [3 1 2]);
 end
 
@@ -200,7 +217,8 @@ W = cat(2, w_i, reshape(w_t, cfg.Mtx, 1, cfg.Ntx));     % Mtx x (Nue+1) x Ntx
 Rall = AN_Em(Dsn, sigma_ue, cfg.Ntx, cfg.Nue, cfg.Mue, ch.H(:, :, cfg.adversary), ...
     noise_adv, W, z, cfg.Mtx);
 Rk = reshape(mean(Rall, 3), cfg.Mtx, cfg.Mtx, cfg.Ntx);
-[success, err, ~, dom] = localize_target(cfg, geo, Rk);
+[success, err, est, dom] = localize_target(cfg, geo, Rk);
+mh = localize_multi(cfg, geo, Rk);
 
 m = sensing_metrics(cfg, geo, w_i, w_t, z);
 e.det = double(success);
@@ -213,5 +231,12 @@ res = geo.resolvable;
 e.fdom = mean(dom.fake_dominant(res));
 e.pkf = mean(dom.peak_class(res) == 1);
 e.pkt = mean(dom.peak_class(res) == 2);
+e.mhv = double(mh.det_votes);
+e.mhr = double(mh.det_rand);
+e.mha = double(mh.det_aware);
+e.mhs = double(mh.det_set);
+fcell = floor((cfg.PosFake - cfg.area([1 3])) / cfg.cell_size);
+e.fhit = double(isequal(floor((est - cfg.area([1 3])) / cfg.cell_size), fcell));
+e.est = est;
 e.pd = detection_pd(cfg, m.V, cfg.pd_offset_dB, cfg.pd_N_list);
 end

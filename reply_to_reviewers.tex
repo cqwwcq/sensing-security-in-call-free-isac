@@ -88,15 +88,76 @@ If no change was made, explain the reason with supporting evidence.]
 
 \reviewer{Reviewer 1}
 \begin{reviewcomment}
-[Insert the reviewer's first comment verbatim.]
+The adversary is assumed to reconstruct the transmit signals of individual
+APs from its received observations. Since the received signal contains a
+superposition of multiple AP transmissions, it is unclear how these
+components can be reliably separated, especially in the presence of AN and
+imperfect CSI.
 \end{reviewcomment}
 \begin{response}
-[Address the concern directly. Explain the clarification, analysis,
-experiment, or revision, and provide supporting evidence where needed.]
+We thank the reviewer for this important comment and agree that the
+separation step requires an explicit treatment. Since all APs transmit common
+symbols, the aggregate observation
+$\mathbf{y}_a[n]=\sum_{k}\mathbf{H}_{a,k}\mathbf{x}_k[n]+\mathbf{n}_a[n]$
+provides only $M_{\mathrm{UE}}$ observation dimensions per snapshot for
+$N_{\mathrm{tx}}M_{\mathrm{tx}}$ per-AP transmit dimensions. Blind separation
+of the per-AP components from $\mathbf{y}_a[n]$ alone is therefore not
+possible in general, and we do not claim otherwise. The original manuscript
+did not state clearly that this step is an assumption, and we have revised
+the threat model accordingly.
+
+Following the threat model of [12], the revised manuscript explicitly adopts
+a \emph{genie-aided strong-adversary model}, in which the per-AP components
+of the received samples are made available to the adversary. We adopt this
+model deliberately, for the following reasons.
+\begin{enumerate}
+  \item \emph{Conservative privacy assessment.} The genie removes the
+  inter-AP superposition, which is the main obstacle for a practical
+  adversary seeking AP-dependent directions. The privacy of the proposed
+  design is therefore assessed against an adversary that is granted a
+  capability that a practical adversary does not have in general.
+  \item \emph{Plausibility.} Partial per-AP separation may become available
+  in practice, e.g., when AP-specific transmissions are resolvable in time
+  or frequency, or when the propagation delays of the distributed APs are
+  resolvable over a wide bandwidth.
+  \item \emph{Design principle.} The network cannot verify the receiver
+  capability of a served user. A privacy mechanism should therefore not
+  rely on the adversary being unable to separate the per-AP signals.
+\end{enumerate}
+
+Regarding the AN, it is intentionally contained in the per-AP components
+available to the adversary. Keeping the AN visible in the raw observations,
+while nulling it at the legitimate combiner outputs, is the
+receive-processing asymmetry on which the proposed design relies. Regarding
+imperfect CSI, the adversary's channel-estimation error enters the residual
+term $\widetilde{\mathbf{n}}_{a,k}^{\mathrm{adv}}[n]$ of the signal model.
+Consistent with the strong-adversary model, the simulated adversary is
+further given accurate knowledge of its per-AP channels $\mathbf{H}_{a,k}$,
+which is now stated in Section~IV. The identifiability of the per-AP
+reconstruction step is discussed in our response to Reviewer~2, Comment~2.
 \end{response}
-\revisionlocation{[Section, page, and line numbers.]}
+\revisionlocation{Section~II, threat-model paragraph; Section~IV-A,
+simulation setup; Section~IV-B, first paragraph. [Add page and line
+numbers.]}
 \begin{revisedtext}
-[Insert the relevant revised passage.]
+\textit{Section II:} ``Since all APs transmit common symbols,
+$\mathbf{y}_a[n]$ offers only $M_{\mathrm{UE}}$ dimensions for
+$N_{\mathrm{tx}}M_{\mathrm{tx}}$ per-AP transmit dimensions, so its per-AP
+decomposition is not identifiable from $\mathbf{y}_a[n]$ alone in general.
+Following [12], we therefore adopt a genie-aided strong-adversary model in
+which the per-AP components of the received samples are available to the
+adversary, as may occur when AP-specific transmissions are resolvable in
+time, frequency, or delay. Since the network cannot verify the receiver
+capability of a served user, this conservative model avoids relying on the
+adversary being unable to separate them.''
+
+\textit{Section IV-A:} ``Throughout, the beams are designed from LMMSE
+channel estimates, whereas the realized SINRs are evaluated on the actual
+channels, and the genie-aided adversary of Section~II is further given
+accurate knowledge of $\mathbf{H}_{a,k}$.''
+
+\textit{Section IV-B:} ``Since the adversary is genie-aided, these success
+rates represent the leakage under a conservative attack model.''
 \end{revisedtext}
 
 \begin{reviewcomment}
@@ -113,7 +174,7 @@ experiment, or revision, and provide supporting evidence where needed.]
 % Duplicate reviewer sections and comment/response blocks as needed.
 \reviewer{Reviewer 2}
 \begin{reviewcomment}
-[Insert the reviewer's comment verbatim.]
+[Insert the reviewer's first comment verbatim.]
 \end{reviewcomment}
 \begin{response}
 [Provide the response and describe any resulting changes.]
@@ -121,6 +182,109 @@ experiment, or revision, and provide supporting evidence where needed.]
 \revisionlocation{[Section, page, and line numbers, or not applicable.]}
 \begin{revisedtext}
 [Insert the relevant revised passage, if applicable.]
+\end{revisedtext}
+
+\begin{reviewcomment}
+The entire threat model relies on the assumption that the adversarial user
+can separate its received superposition into per-AP raw components and then
+reconstruct $\hat{\mathbf x}_k[n]$ for each AP. However, the actual
+observation is
+$\mathbf y_a[n]=\sum_k\mathbf H{a,k}\mathbf x_k[n]+\mathbf n_a[n]$, while
+each $\mathbf x_k[n]\in\mathbb C^{M_{\mathrm{tx}}}$ is unknown; with
+$N_{\mathrm{tx}}M_{\mathrm{tx}}$ transmit dimensions but only
+$M_{\mathrm{UE}}$ received dimensions per snapshot, this decomposition is
+generally underdetermined. What identifiability conditions make the assumed
+EM reconstruction of each AP waveform possible, particularly for the default
+setting $N_{\mathrm{tx}}=8$, $M_{\mathrm{tx}}=16$, and $M_{\mathrm{UE}}=16$?
+\end{reviewcomment}
+\begin{response}
+We thank the reviewer for this insightful comment and fully agree with the
+dimension count. Since the APs transmit common symbols, $\mathbf{y}_a[n]$
+offers $M_{\mathrm{UE}}=16$ observation dimensions per snapshot, against
+$N_{\mathrm{tx}}M_{\mathrm{tx}}=128$ per-AP transmit dimensions in the
+default setting. The decomposition of $\mathbf{y}_a[n]$ into per-AP
+components is therefore underdetermined, and the original manuscript did not
+state clearly that this step is an assumption rather than a consequence of
+the signal model. We have revised the threat model to separate the attack
+into two stages and to state the identifiability status of each.
+
+\textbf{(i) Per-AP separation (assumed).} The separation of
+$\mathbf{y}_a[n]$ into per-AP components is not identifiable from
+$\mathbf{y}_a[n]$ alone in general. Following [12], we now state explicitly
+that we adopt a genie-aided strong-adversary model, in which the per-AP
+observations $\widetilde{\mathbf{y}}_{a,k}[n]$ are available to the
+adversary. The genie removes the inter-AP superposition, which is the main
+obstacle for a practical adversary, so the privacy of the proposed design is
+assessed against an adversary that is granted a capability that a practical
+adversary does not have in general. Since the network cannot verify the
+separation capability of a served user, we consider it appropriate that the
+defense does not rely on this capability being limited. Partial separation
+may become available in practice, e.g., when AP-specific transmissions are
+resolvable, or under wideband operation with resolvable inter-AP delays.
+
+\textbf{(ii) Per-AP reconstruction (identifiable under a stated
+condition).} Given
+$\widetilde{\mathbf{y}}_{a,k}[n]=\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}\widetilde{\mathbf{x}}_k[n]+\widetilde{\mathbf{n}}_{a,k}^{\mathrm{adv}}[n]$,
+the recovery of $\widetilde{\mathbf{x}}_k[n]$ is a linear inverse problem
+with $M_{\mathrm{UE}}$ equations and $M_{\mathrm{tx}}$ unknowns. It is
+identifiable when $\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$ has full
+column rank, which holds with probability one under Rayleigh fading whenever
+$M_{\mathrm{UE}}\ge M_{\mathrm{tx}}$. The default setting satisfies this
+condition with $M_{\mathrm{UE}}=M_{\mathrm{tx}}=16$. Moreover, since the
+beampattern in (3) depends only on the covariance
+$\mathbf{R}_{\widetilde{\mathbf{x}}_k}$, whose rank is at most
+$N_{\mathrm{UE}}+1$ (the other users' streams, the sensing stream, and the AN
+stream), a weaker sufficient condition is that
+$\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$ is injective on the column space
+of $[\mathbf{W}_{-a,k},\mathbf{z}_k]$. If $M_{\mathrm{UE}}<M_{\mathrm{tx}}$,
+the adversary recovers only the projection of
+$\mathbf{R}_{\widetilde{\mathbf{x}}_k}$ onto the row space of
+$\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$, and the reconstructed
+beampattern is distorted, which further favors the defender. The EM routine
+of [12] jointly refines the channel and signal estimates within this per-AP
+linear model. It does not resolve the inter-AP superposition, which is
+removed by the genie.
+
+We have also rewritten the sentence explaining why the attack operates on raw
+samples, since in the original version it could be read as implying that raw
+samples alone suffice for per-AP recovery. In addition, Section~IV now states
+that the simulated adversary is given accurate knowledge of
+$\mathbf{H}_{a,k}$, and that the reported success rates therefore
+correspond to a conservative attack model.
+\end{response}
+\revisionlocation{Section~II, threat-model paragraph; Section~IV-A,
+simulation setup; Section~IV-B, first paragraph. [Add page and line
+numbers.]}
+\begin{revisedtext}
+\textit{Section II:} ``One served user, indexed by $a$, is treated as an
+internal adversary. It knows its own pilots, data symbols, combiner
+$\mathbf{u}_a$, and the transmit-AP positions, and can form its own estimate
+$\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$ of its channel
+$\mathbf{H}_{a,k}$. Since all APs transmit common symbols, $\mathbf{y}_a[n]$
+offers only $M_{\mathrm{UE}}$ dimensions for $N_{\mathrm{tx}}M_{\mathrm{tx}}$
+per-AP transmit dimensions, so its per-AP decomposition is not identifiable
+from $\mathbf{y}_a[n]$ alone in general. Following [12], we therefore adopt a
+genie-aided strong-adversary model in which the per-AP components of the
+received samples are available to the adversary, as may occur when
+AP-specific transmissions are resolvable in time, frequency, or delay. Since
+the network cannot verify the receiver capability of a served user, this
+conservative model avoids relying on the adversary being unable to separate
+them. The attack operates on raw multi-antenna samples, since applying
+$\mathbf{u}_a$ would collapse each snapshot into a scalar. After decoding its
+own data symbol $s_a[n]$, the adversary subtracts its data component using
+its channel estimate $\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$, which
+leaves
+$\widetilde{\mathbf{y}}_{a,k}[n]=\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}\widetilde{\mathbf{x}}_k[n]+\widetilde{\mathbf{n}}_{a,k}^{\mathrm{adv}}[n]$
+with the non-self transmit component
+$\widetilde{\mathbf{x}}_k[n]=\sum_{j\neq a}\mathbf{w}_{j,k}s_j[n]+\mathbf{w}_{t,k}s_t[n]$,
+and $\widetilde{\mathbf{n}}_{a,k}^{\mathrm{adv}}[n]$ collecting the receiver
+noise and the residual caused by adversary-side channel-estimation errors.
+It then applies an expectation-maximization routine to obtain
+$\widehat{\mathbf{x}}_k[n]\approx\widetilde{\mathbf{x}}_k[n]$, which is
+identifiable when $\widehat{\mathbf{H}}_{a,k}^{\mathrm{adv}}$ has full
+column rank, i.e., with probability one for $M_{\mathrm{UE}}\ge
+M_{\mathrm{tx}}$, and forms the AP-dependent beampattern from the sample
+covariance over the available snapshots.''
 \end{revisedtext}
 
 % Optional references cited in this response letter:

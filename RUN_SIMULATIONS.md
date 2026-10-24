@@ -4,6 +4,9 @@ These steps produce every number and figure that the reply letter and the revise
 need. Run them in order. Steps 1 and 2 are short checks; do not skip them, since a
 problem found there saves hours later.
 
+A Python port of all the MATLAB code is in `python/`, with the same steps as Python
+commands in `python/README.md`. It needs no MATLAB or CVX.
+
 ## Before you start
 
 - MATLAB R2020a or later (the plot scripts use `exportgraphics`).

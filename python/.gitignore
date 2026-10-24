@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+# per-realization checkpoints of interrupted or finished sweeps
+results/*.parts_*/

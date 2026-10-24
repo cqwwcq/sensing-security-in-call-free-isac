@@ -7,6 +7,9 @@ The folder names `fig.7.detection` and `fig.9.outage` follow the figure numberin
 earlier, longer version of the paper (the logs say "Fig. 9/10 sweep" and save to
 `figure/detection_rate_final.pdf`). They do **not** match the current figure numbers.
 
+Every MATLAB file listed here has a Python counterpart in `python/`; see the map in
+`python/README.md`.
+
 ## Summary
 
 | Paper fig. | PDF in `figure/` | Code folder | Data file used for the plotted values | Values checked against the text |
